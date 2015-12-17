@@ -1,4 +1,4 @@
- # allmake
+ allmake V1.0.0
 ------------------------------------------------------------------- 
 	Description: The cross platform development toolkit - allmake
 	Author: John Deng (john.deng@outlook.com)
