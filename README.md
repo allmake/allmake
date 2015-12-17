@@ -19,13 +19,31 @@ Prerequisites:
 
 Installation:
 -------------------------------------------------------------------
+
 	git clone https://github.com/allmake/allmake.git
 	cd allmake
 	sudo ./bin/allmake -i
 
-
-Usage: the usage is as same as make but with more powerful features
+Getting started:
 -------------------------------------------------------------------
+	Afer installed allmake, reboot the computer.
+	Then allmake is ready to use, simply type below command to start you project
+
+	mkdir -p ~/workspace/demo
+	cd ~/workspace/demo
+	allmake add plat=x86_64-linux
+	allmake clean all release bin
+
+	./build/x86_64-linux-gnu/obj/demo
+
+		You will see below message
+
+		demo V1.0.0.151212
+
+Usage: 
+-------------------------------------------------------------------
+	The usage is as same as make but with more powerful features.
+
 	options:
 		add     : add a new platform
 		update  : update settings
