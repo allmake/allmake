@@ -1,0 +1,17 @@
+///////////////////////////////////////////////////////////////////////////////
+// Project: app
+// Date & time: 12-18-2015 00:29
+// File created by: johnd
+///////////////////////////////////////////////////////////////////////////////
+
+#include <iostream>
+#include <version.h>
+
+using namespace std;
+
+int main(int argc, char* argv[])
+{
+	cout << appVersion() << endl;
+    return 0;
+}
+

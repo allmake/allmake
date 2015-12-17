@@ -1,0 +1,16 @@
+///////////////////////////////////////////////////////////////////////////////
+// Project: app
+// Date & time: 12-18-2015 00:29
+// Author: John Deng
+// Last change done by : johnd $
+///////////////////////////////////////////////////////////////////////////////
+
+#include "version.h"
+
+static const char* s_pszVersion = "app V" REVERSION ".151218";
+
+const char* appVersion()
+{
+    return s_pszVersion;
+}
+
