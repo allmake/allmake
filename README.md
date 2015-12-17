@@ -29,6 +29,8 @@ Getting started:
 	Afer installed allmake, reboot the computer.
 	Then allmake is ready to use, simply type below command to start you project
 
+	- Generating c/c++ source code and Cross compiling a new project.
+
 	mkdir -p ~/workspace/demo
 	cd ~/workspace/demo
 	allmake add plat=x86_64-linux
@@ -39,6 +41,37 @@ Getting started:
 		You will see below message
 
 		demo V1.0.0.151212
+
+
+	- Cross compiling third party source code for arm linux (arm-brcm-linux-gnueabi) using allmake 
+	
+	1. configure (Do it only once)
+
+	zlib:
+		allmake add plat=brcm exports='cc ar' cwd
+
+	openssl:
+		allmake add plat=brcm exports='cc ar ld strip rainlib' options='shared no-asm -DL_ENDIAN linux-generic32' cwd
+
+	openssh:
+		allmake add cross plat=brcm options='--with-libs --with-zlib=$prefix --with-ssl-dir=$prefix --disable-etc-default-login --prefix=/usr' exports='cc ar'
+
+	libffi:
+		add cross plat=brcm
+
+	glib:
+		allmake add cross plat=brcm options='glib_cv_stack_grows=no glib_cv_uscore=no ac_cv_func_posix_getpwuid_r=yes ac_cv_func_posix_getgrgid_r=yes ac_cv_lib_rt_clock_gettime=no glib_cv_monotoni c_clock=yes ZLIB_CFLAGS=-I$prefix/include ZLIB_LIBS="-L$prefix/lib -lz" LIBFFI_CFLAGS=-I$prefix/include LIBFFI_LIBS="-L$prefix/lib -lffi" '
+
+	libpng: (tip: install zlib to sysroot under toolchain first)
+		add cross plat=brcm
+
+	libjpeg:
+		add cross plat=brcm options='--enable-shared --disable-static'
+
+
+	2. make and install	
+
+		allmake clean all install
 
 Usage: 
 -------------------------------------------------------------------
