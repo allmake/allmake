@@ -3,6 +3,13 @@
 	Description: The cross platform development toolkit - allmake
 	Author: John Deng (john.deng@outlook.com)
 	Updated 2015.12.12
+
+	allmake is a cross platform development toolkit for c/c++, it depends on make or automake, it easy to use.
+	You can start without write any makefile, it generate the config file and source code for you, you just
+	need to put your own source code under include and src folder.
+
+	allmake also is a convenient tool that cross compling third party source code for you, simply with three
+	command lines.
   
 Prerequisites:
 -------------------------------------------------------------------
@@ -24,12 +31,14 @@ Installation:
 	cd allmake
 	sudo ./bin/allmake -i
 
+	If you wish to use your own compiler, just put it under the toolchain folder.
+
 Getting started:
 -------------------------------------------------------------------
 	Afer installed allmake, reboot the computer.
-	Then allmake is ready to use, simply type below command to start you project
+	Then allmake is ready to use, simply type below command to start you project,
 
-	- Generating c/c++ source code and Cross compiling a new project.
+	*Generating c/c++ source code and Cross compiling a new project.
 
 	mkdir -p ~/workspace/demo
 	cd ~/workspace/demo
@@ -43,9 +52,9 @@ Getting started:
 		demo V1.0.0.151212
 
 
-	- Cross compiling third party source code for arm linux (arm-brcm-linux-gnueabi) using allmake 
+	*Cross compiling third party source code for arm linux (arm-brcm-linux-gnueabi) using allmake 
 	
-	1. configure (Do it only once)
+	1. add platform configurations (Do it only once)
 
 	zlib:
 		allmake add plat=brcm exports='cc ar' cwd
@@ -68,9 +77,11 @@ Getting started:
 	libjpeg:
 		add cross plat=brcm options='--enable-shared --disable-static'
 
+	2. configure
+		allmake configure
 
-	2. make and install	
-
+	3. make and install	
+		allmake configure
 		allmake clean all install
 
 Usage: 
