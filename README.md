@@ -7,6 +7,8 @@
 	allmake is a cross platform development toolkit for c/c++, it depends on make or automake, 
 	it easy to use. You can start without write any makefile, it generate the config file and 
 	source code for you, you just need to put your own source code under include and src folder.
+	allmake will compile it and generate binary or shared library depends on the command that 
+	your input.
 
 	allmake also is a convenient tool that cross compling third party source code for you, 
 	simply with three command lines.
@@ -53,7 +55,7 @@ Getting started:
 
 
 	*Cross compiling third party source code for arm linux (arm-brcm-linux-gnueabi) using allmake 
-		
+
 		allmake add plat=the-keyword-of-compiler-folder-name-under-allmake-toolchain options='--enable-feature1 --with-libx'
 		allmake configure
 		allmake clean all install
@@ -70,22 +72,21 @@ Getting started:
 		allmake add cross plat=brcm options='--with-libs --with-zlib=$prefix --with-ssl-dir=$prefix --disable-etc-default-login --prefix=/usr' exports='cc ar'
 
 	libffi:
-		add cross plat=brcm
+		allmake add cross plat=brcm
 
 	glib:
 		allmake add cross plat=brcm options='glib_cv_stack_grows=no glib_cv_uscore=no ac_cv_func_posix_getpwuid_r=yes ac_cv_func_posix_getgrgid_r=yes ac_cv_lib_rt_clock_gettime=no glib_cv_monotoni c_clock=yes ZLIB_CFLAGS=-I$prefix/include ZLIB_LIBS="-L$prefix/lib -lz" LIBFFI_CFLAGS=-I$prefix/include LIBFFI_LIBS="-L$prefix/lib -lffi" '
 
 	libpng: (tip: install zlib to sysroot under toolchain first)
-		add cross plat=brcm
+		allmake add cross plat=brcm
 
 	libjpeg:
-		add cross plat=brcm options='--enable-shared --disable-static'
+		allmake add cross plat=brcm options='--enable-shared --disable-static'
 
 	2. configure
 		allmake configure
 
-	3. make and install	
-		allmake configure
+	3. make and install
 		allmake clean all install
 
 Usage: 
