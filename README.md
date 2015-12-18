@@ -4,12 +4,12 @@
 	Author: John Deng (john.deng@outlook.com)
 	Updated 2015.12.12
 
-	allmake is a cross platform development toolkit for c/c++, it depends on make or automake, it easy to use.
-	You can start without write any makefile, it generate the config file and source code for you, you just
-	need to put your own source code under include and src folder.
+	allmake is a cross platform development toolkit for c/c++, it depends on make or automake, 
+	it easy to use. You can start without write any makefile, it generate the config file and 
+	source code for you, you just need to put your own source code under include and src folder.
 
-	allmake also is a convenient tool that cross compling third party source code for you, simply with three
-	command lines.
+	allmake also is a convenient tool that cross compling third party source code for you, 
+	simply with three command lines.
   
 Prerequisites:
 -------------------------------------------------------------------
@@ -53,6 +53,10 @@ Getting started:
 
 
 	*Cross compiling third party source code for arm linux (arm-brcm-linux-gnueabi) using allmake 
+		
+		allmake add plat=the-keyword-of-compiler-folder-name-under-allmake-toolchain options='--enable-feature1 --with-libx'
+		allmake configure
+		allmake clean all install
 	
 	1. add platform configurations (Do it only once)
 
