@@ -104,6 +104,8 @@ Usage:
 		install : install target to ${ALLMAKE_HOME}/platfrom/
 		plat    : specify platfrom, make single platform instead of all, e.g. allmake clean all plat=x86
 		options : options for third party source code, e.g. allmake add plat=brcm options='--with-zlib --with-png '
+		exports : export variables, e.g. allmake add plat=brcm export='cc' --> export CC=arm-brcm-linux-gnueabi-gcc
+		cwd     : set current directory as working directoy
 
 	Examples:      
 		allmake add plat=x86

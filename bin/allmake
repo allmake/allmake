@@ -53,28 +53,30 @@ function showHelp()
 Usage: the usage is as same as make but with more powerful features
 
 options:
-      add     : add a new platform
-      update  : update settings
-      clean   : clean objects
-      plat    : specify platform name under toolchian, you may just type the key word instead of whole name, without this option, ${ALLMAKE_NAME} will make all platfroms.
-      all     : make all source codes
-      release : make release with O2 (optimization) option
-      bin     : output binary, it will output shared library file (linux: .so, mac os x: .dylib, windows: .dll) without this option
-      install : install target to \${ALLMAKE_HOME}/platfrom/
-      plat    : specify platfrom, make single platform instead of all, e.g. ${ALLMAKE_NAME} clean all plat=x86
-      options : options for third party source code, e.g. ${ALLMAKE_NAME} add plat=brcm options='--with-zlib --with-png '
+    add     : add a new platform
+    update  : update settings
+    clean   : clean objects
+    plat    : specify platform name under toolchian, you may just type the key word instead of whole name, without this option, ${ALLMAKE_NAME} will make all platfroms.
+    all     : make all source codes
+    release : make release with O2 (optimization) option
+    bin     : output binary, it will output shared library file (linux: .so, mac os x: .dylib, windows: .dll) without this option
+    install : install target to \${ALLMAKE_HOME}/platfrom/
+    plat    : specify platfrom, make single platform instead of all, e.g. ${ALLMAKE_NAME} clean all plat=x86
+    options : options for third party source code, e.g. ${ALLMAKE_NAME} add plat=brcm options='--with-zlib --with-png '
+    exports : export variables, e.g. allmake add plat=brcm export='cc' --> export CC=arm-brcm-linux-gnueabi-gcc
+    cwd     : set current directory as working directoy
 
 Examples:      
-      ${ALLMAKE_NAME} add plat=x86
-      ${ALLMAKE_NAME} update ver=1.0.1     
-      ${ALLMAKE_NAME} plat=x86 uiclean ui
-      ${ALLMAKE_NAME} plat=x86 clean
-      ${ALLMAKE_NAME} plat=x86 clean all
-      ${ALLMAKE_NAME} plat=x86 clean all install
-      ${ALLMAKE_NAME} plat=x86 install
-      ${ALLMAKE_NAME} plat=x86 clean all
-      ${ALLMAKE_NAME} plat=x86 clean all bin
-      ${ALLMAKE_NAME} plat=x86 clean all test
+    ${ALLMAKE_NAME} add plat=x86
+    ${ALLMAKE_NAME} update ver=1.0.1     
+    ${ALLMAKE_NAME} plat=x86 uiclean ui
+    ${ALLMAKE_NAME} plat=x86 clean
+    ${ALLMAKE_NAME} plat=x86 clean all
+    ${ALLMAKE_NAME} plat=x86 clean all install
+    ${ALLMAKE_NAME} plat=x86 install
+    ${ALLMAKE_NAME} plat=x86 clean all
+    ${ALLMAKE_NAME} plat=x86 clean all bin
+    ${ALLMAKE_NAME} plat=x86 clean all test
 
     " 
 }
@@ -870,7 +872,7 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 	cout << ${S_PROJECT_NAME}Version() << endl;
-    return 0;
+	return 0;
 }
 
 _EOF_
