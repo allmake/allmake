@@ -1153,9 +1153,9 @@ function build()
 	# echo "build() $1"
     if [ ! -d $1 ]; then
         if [ "$add" == "" ]; then
-            if [ "$plat" != "" ]; then
-                showWarning "You arm running ${ALLMAKE_NAME} for the platform ($1) that does not exist." "Please run ${ALLMAKE_NAME} add plat=your-platform-name first."            
-            fi
+            # if [ "$plat" != "" ]; then
+            #     showWarning "You arm running ${ALLMAKE_NAME} for the platform ($1) that does not exist." "Please run ${ALLMAKE_NAME} add plat=your-platform-name first."            
+            # fi
             #echo "exit ..."
             return
         else
@@ -1631,11 +1631,11 @@ elif [ "$update" != "" ]; then
 
 else
 
-if [ ! -f ./build/Makefile ]; then
-    echo "Makefile not found"
-    showHelp
-    exit
-fi    
+    if [ "$isThirdPartyProject" == "no" ] && [ ! -f ./build/Makefile ]; then
+        echo "Makefile not found"
+        showHelp
+        exit
+    fi     
 
 fi
 
