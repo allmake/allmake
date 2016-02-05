@@ -1342,12 +1342,16 @@ export DEVICE_PATH=$DEVICE_PATH
 export OS=`uname`
 export OS=${OS%_*}
 
+MAKE_INSTALL_CMD="sudo apt-get install make"
 if [ "$ALLMAKE_HOME" == "" ]; then
     export ALLMAKE_HOME=$KIWI_ROOT
 fi
 
 if [ "$OS" == "Darwin" ]; then
     export COLOR_PREFIX="\033"
+    MAKE_INSTALL_CMD="brew install make"
+elif [ "$OS" == "MSYS" ]; then
+    MAKE_INSTALL_CMD="pacman -S make"    
 else
     export COLOR_PREFIX="\e"
 fi
@@ -1399,6 +1403,11 @@ function showInstallErrorMessage()
 }
 
 if [ "$1" == "-i" ] || [ "$1" == "--install" ]; then
+
+    hasMake=`which make | wc -l`
+    if [ "$hasMake" == "0" ]; then
+        MAKE_INSTALL_CMD
+    fi
     
     ETC_PROFILE=/etc/profile 
 
