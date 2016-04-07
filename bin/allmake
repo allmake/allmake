@@ -21,8 +21,8 @@
 ###############################################################################
 # Basic Info
 
-ALLMAKE_VER="1.0.0"
-ALLMAKE_UPDATED="2015.12.12"
+ALLMAKE_VER="1.0.1"
+ALLMAKE_UPDATED="2016.04.07"
 ALLMAKE_NAME=allmake
 ALLMAKE_AUTHER="John Deng (john.deng@outlook.com)"
 ALLMAKE_DES="Description: The cross platform development toolkit - ${ALLMAKE_NAME}"
@@ -65,6 +65,12 @@ options:
     options : options for third party source code, e.g. ${ALLMAKE_NAME} add plat=brcm options='--with-zlib --with-png '
     exports : export variables, e.g. allmake add plat=brcm export='cc' --> export CC=arm-brcm-linux-gnueabi-gcc
     cwd     : set current directory as working directoy
+    app     : app name, e.g. app=myapp
+    ver     : app version
+    profile : profile [test, dev, prod]
+    ports   : ports that need to redirect
+    template: java or node
+    inet    : network adapter interface, e.g. eth0
 
 Examples:      
     ${ALLMAKE_NAME} add plat=x86
@@ -77,6 +83,8 @@ Examples:
     ${ALLMAKE_NAME} plat=x86 clean all
     ${ALLMAKE_NAME} plat=x86 clean all bin
     ${ALLMAKE_NAME} plat=x86 clean all test
+    ${ALLMAKE_NAME} add app=myapp ver=1.0.0 profile=test ports="8080 9090 9500" template=java inet=eth0
+    ${ALLMAKE_NAME} docker up
 
     " 
 }
@@ -1303,6 +1311,43 @@ function buildall()
     return 0
 }
 
+
+function rundocker()
+{
+
+    find ./ -name "docker-compose.yml" -print | sort | while read dockercompose; do
+
+        dockerdir=$(dirname "${dockercompose}")
+        #echo $dockerdir
+        # echo builders:$builders
+        pushd $dockerdir > /dev/null
+
+        #echo $PWD
+
+        # # echo "builders: $builders"
+        if [ "$app" != "" ]; then
+            if [ $(echo $dockercompose | grep -c "$app") -gt 0 ]; then
+                #echo "run $app: $dockercompose"
+                sudo docker-compose $up $down
+
+            fi
+        else
+            #echo "run $dockercompose"
+            sudo docker-compose $up $down
+        fi
+
+        if [ "$sleep" != "" ]; then
+            sleep $sleep
+        fi
+       
+        popd > /dev/null
+
+    done
+
+
+    return 0
+}
+
 ###############################################################################
 # Quit
 
@@ -1342,16 +1387,16 @@ export DEVICE_PATH=$DEVICE_PATH
 export OS=`uname`
 export OS=${OS%_*}
 
-MAKE_INSTALL_CMD="sudo apt-get install make"
+DEP_INSTALL_CMD="sudo apt-get install make rpl"
 if [ "$ALLMAKE_HOME" == "" ]; then
     export ALLMAKE_HOME=$KIWI_ROOT
 fi
 
 if [ "$OS" == "Darwin" ]; then
     export COLOR_PREFIX="\033"
-    MAKE_INSTALL_CMD="brew install make"
+    DEP_INSTALL_CMD="brew install make rpl"
 elif [ "$OS" == "MSYS" ]; then
-    MAKE_INSTALL_CMD="pacman -S make"    
+    DEP_INSTALL_CMD="pacman -S make rpl"    
 else
     export COLOR_PREFIX="\e"
 fi
@@ -1406,7 +1451,7 @@ if [ "$1" == "-i" ] || [ "$1" == "--install" ]; then
 
     hasMake=`which make | wc -l`
     if [ "$hasMake" == "0" ]; then
-        MAKE_INSTALL_CMD
+        DEP_INSTALL_CMD
     fi
     
     ETC_PROFILE=/etc/profile 
@@ -1586,6 +1631,34 @@ fi
 # add new platform
 
 if [ "$add" != "" ]; then
+    if [ "$app" != "" ]; then
+        # allmake add app=vp-sms-provider ver=1.0.0 profile=test ports="9100 9200 9300" template=java inet=eth0
+        #o "$app"
+
+        hostIpAddress=$(ifconfig $inet | grep "inet addr" | cut -d ':' -f 2 | cut -d ' ' -f 1)
+
+        portsArray=$(
+            for port in $ports
+            do
+                echo "    - $port:$port"
+            done
+        )
+
+        #echo $portsArray
+
+        mkdir -p $app/app/config
+        mkdir -p $app/app/logs
+
+        cp $ALLMAKE_HOME/templates/$template.amt $app/docker-compose.yml        
+
+        sed -i "s/\${app}/${app}/g; s/\${ver}/${ver}/g; s/\${profile}/${profile}/g; s/\${hostIpAddress}/${hostIpAddress}/g" $app/docker-compose.yml
+
+        rpl -w -q "\${portsArray}" "${portsArray}" $app/docker-compose.yml
+
+        quit "Created app: $app"
+
+    fi
+
     if [ ! -d build ]; then
         mkdir -p build 
     fi
@@ -1630,6 +1703,11 @@ if [ "$add" != "" ]; then
             quit "Cancelled"
         fi
     fi
+elif [ "$docker" != "" ]; then
+
+    rundocker
+    exit
+
 elif [ "$update" != "" ]; then
 
     # update version
