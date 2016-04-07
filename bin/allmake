@@ -1314,6 +1314,10 @@ function buildall()
 
 function rundocker()
 {
+    l_daemon=
+    if [ "$daemon" != "" ]; then
+        l_daemon=" -d"
+    fi
 
     find ./ -name "docker-compose.yml" -print | sort | while read dockercompose; do
 
@@ -1328,12 +1332,12 @@ function rundocker()
         if [ "$app" != "" ]; then
             if [ $(echo $dockercompose | grep -c "$app") -gt 0 ]; then
                 #echo "run $app: $dockercompose"
-                sudo docker-compose $up $down
+                sudo docker-compose $up $down $l_daemon
 
             fi
         else
             #echo "run $dockercompose"
-            sudo docker-compose $up $down
+            sudo docker-compose $up $down $l_daemon
         fi
 
         if [ "$sleep" != "" ]; then
