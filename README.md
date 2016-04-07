@@ -99,33 +99,33 @@ Usage:
 	    add     : add a new platform
 	    update  : update settings
 	    clean   : clean objects
-	    plat    : specify platform name under toolchian, you may just type the key word instead of whole name, without this option, ${ALLMAKE_NAME} will make all platfroms.
+	    plat    : specify platform name under toolchian, you may just type the key word instead of whole name, without this option, allmake will make all platfroms.
 	    all     : make all source codes
 	    release : make release with O2 (optimization) option
 	    bin     : output binary, it will output shared library file (linux: .so, mac os x: .dylib, windows: .dll) without this option
 	    install : install target to \${ALLMAKE_HOME}/platfrom/
-	    plat    : specify platfrom, make single platform instead of all, e.g. ${ALLMAKE_NAME} clean all plat=x86
-	    options : options for third party source code, e.g. ${ALLMAKE_NAME} add plat=brcm options='--with-zlib --with-png '
+	    plat    : specify platfrom, make single platform instead of all, e.g. allmake clean all plat=x86
+	    options : options for third party source code, e.g. allmake add plat=brcm options='--with-zlib --with-png '
 	    exports : export variables, e.g. allmake add plat=brcm export='cc' --> export CC=arm-brcm-linux-gnueabi-gcc
 	    cwd     : set current directory as working directoy
 	    app     : app name, e.g. app=myapp
 	    ver     : app version
 	    profile : profile [test, dev, prod]
-	    ports   : ports that need to redirect
+	    ports   : ports that need to redirect, e.g. ports="8080 9090"
 	    template: java or node
 	    inet    : network adapter interface, e.g. eth0
 
 	Examples:      
-	    ${ALLMAKE_NAME} add plat=x86
-	    ${ALLMAKE_NAME} update ver=1.0.1     
-	    ${ALLMAKE_NAME} plat=x86 uiclean ui
-	    ${ALLMAKE_NAME} plat=x86 clean
-	    ${ALLMAKE_NAME} plat=x86 clean all
-	    ${ALLMAKE_NAME} plat=x86 clean all install
-	    ${ALLMAKE_NAME} plat=x86 install
-	    ${ALLMAKE_NAME} plat=x86 clean all
-	    ${ALLMAKE_NAME} plat=x86 clean all bin
-	    ${ALLMAKE_NAME} plat=x86 clean all test
-	    ${ALLMAKE_NAME} add app=myapp ver=1.0.0 profile=test ports="8080 9090 9500" template=java inet=eth0
-	    ${ALLMAKE_NAME} docker up
+	    allmake add plat=x86
+	    allmake update ver=1.0.1     
+	    allmake plat=x86 uiclean ui
+	    allmake plat=x86 clean
+	    allmake plat=x86 clean all
+	    allmake plat=x86 clean all install
+	    allmake plat=x86 install
+	    allmake plat=x86 clean all
+	    allmake plat=x86 clean all bin
+	    allmake plat=x86 clean all test
+	    allmake add app=myapp ver=1.0.0 profile=test ports="8080 9090 9500" template=java inet=eth0
+	    allmake docker up
 
