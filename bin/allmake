@@ -1311,9 +1311,42 @@ function buildall()
     return 0
 }
 
-
-function rundocker()
+function rundockercompose()
 {
+    sudo docker-compose $up $down $version $build $config $create $events $kill $logs $pause $port $ps $pull $restart $rm $run $scale $start $stop $unpause 
+}   
+
+function rundockers()
+{
+
+    if [ "$help" != "" ]; then
+
+        echo -e " 
+        ${ALLMAKE_NAME} docker build              Build or rebuild services
+        ${ALLMAKE_NAME} docker config             Validate and view the compose file
+        ${ALLMAKE_NAME} docker create             Create services
+        ${ALLMAKE_NAME} docker down               Stop and remove containers, networks, images, and volumes
+        ${ALLMAKE_NAME} docker events             Receive real time events from containers
+        ${ALLMAKE_NAME} docker help               Get help on a command
+        ${ALLMAKE_NAME} docker kill               Kill containers
+        ${ALLMAKE_NAME} docker logs               View output from containers
+        ${ALLMAKE_NAME} docker pause              Pause services
+        ${ALLMAKE_NAME} docker port               Print the public port for a port binding
+        ${ALLMAKE_NAME} docker ps                 List containers
+        ${ALLMAKE_NAME} docker pull               Pulls service images
+        ${ALLMAKE_NAME} docker restart            Restart services
+        ${ALLMAKE_NAME} docker rm                 Remove stopped containers
+        ${ALLMAKE_NAME} docker run                Run a one-off command
+        ${ALLMAKE_NAME} docker scale              Set number of containers for a service
+        ${ALLMAKE_NAME} docker start              Start services
+        ${ALLMAKE_NAME} docker stop               Stop services
+        ${ALLMAKE_NAME} docker unpause            Unpause services
+        ${ALLMAKE_NAME} docker up                 Create and start containers
+        ${ALLMAKE_NAME} docker version            Show the Docker-Compose version information
+        "
+        exit
+    fi
+
     l_daemon=
     if [ "$daemon" != "" ]; then
         l_daemon=" -d"
@@ -1332,12 +1365,12 @@ function rundocker()
         if [ "$app" != "" ]; then
             if [ $(echo $dockercompose | grep -c "$app") -gt 0 ]; then
                 #echo "run $app: $dockercompose"
-                sudo docker-compose $up $down $l_daemon
+                rundockercompose
 
             fi
         else
             #echo "run $dockercompose"
-            sudo docker-compose $up $down $l_daemon
+            rundockercompose
         fi
 
         if [ "$sleep" != "" ]; then
@@ -1709,7 +1742,7 @@ if [ "$add" != "" ]; then
     fi
 elif [ "$docker" != "" ]; then
 
-    rundocker
+    rundockers
     exit
 
 elif [ "$update" != "" ]; then
