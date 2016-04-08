@@ -1453,10 +1453,10 @@ function showInstallErrorMessage()
 
 if [ "$1" == "-i" ] || [ "$1" == "--install" ]; then
 
-    hasMake=`which make | wc -l`
-    if [ "$hasMake" == "0" ]; then
+    # hasMake=`which make | wc -l`
+    # if [ "$hasMake" == "0" ]; then
         DEP_INSTALL_CMD
-    fi
+    # fi
     
     ETC_PROFILE=/etc/profile 
 
