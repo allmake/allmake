@@ -1313,7 +1313,12 @@ function buildall()
 
 function rundockercompose()
 {
-    sudo docker-compose $up $down $version $build $config $create $events $kill $logs $pause $port $ps $pull $restart $rm $run $scale $start $stop $unpause 
+    l_daemon=
+    if [ "$daemon" != "" ]; then
+        l_daemon=" -d"
+    fi
+
+    sudo docker-compose $up $down $l_daemon $version $build $config $create $events $kill $logs $pause $port $ps $pull $restart $rm $run $scale $start $stop $unpause 
 }   
 
 function rundockers()
@@ -1345,11 +1350,6 @@ function rundockers()
         ${ALLMAKE_NAME} docker version            Show the Docker-Compose version information
         "
         exit
-    fi
-
-    l_daemon=
-    if [ "$daemon" != "" ]; then
-        l_daemon=" -d"
     fi
 
     find ./ -name "docker-compose.yml" -print | sort | while read dockercompose; do
