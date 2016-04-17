@@ -1326,7 +1326,11 @@ function runmvn()
 {   
     echo -e $GREEN $1 $ENDCOLOR
 
+    mvn $clean $compile $install $package $run $test $param
+
     if [ "$release" == "release" ]; then
+        echo -e $GREEN Release $1 $ENDCOLOR
+
         find ./ -name "*provider*.jar" | while read javajarfile; do
             mkdir -p $ALLMAKE_HOME/release/mvn/$1/app
             cp $javajarfile $ALLMAKE_HOME/release/mvn/$1/app/
@@ -1336,8 +1340,6 @@ function runmvn()
             mkdir -p $ALLMAKE_HOME/release/mvn/$1/app
             cp $javajarfile $ALLMAKE_HOME/release/mvn/$1/app/
         done    
-    else
-        mvn $clean $compile $install $package $run $test $param
     fi
 }
 
