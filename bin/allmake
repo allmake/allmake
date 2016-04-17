@@ -1329,6 +1329,7 @@ function runmvn()
     mvn $clean $compile $install $package $run $test $param
 
     if [ "$release" == "release" ]; then
+        echo ""
         echo -e $GREEN Release $1 $ENDCOLOR
 
         find ./ -name "*provider*.jar" | while read javajarfile; do
@@ -1530,8 +1531,9 @@ function quit()
 
 function mainloop()
 {
-    echo "[${ALLMAKE_HOME}] main loop"
+    echo ""
 }
+
 #echo "main loop"
 ###############################################################################
 # Common variables
@@ -1704,6 +1706,8 @@ while [ "$#" != "0" ]; do
 
 done
 
+###############################################################################
+showVersion
 ###############################################################################
 # Init variables
 export WOKRING_DIR=$PWD
