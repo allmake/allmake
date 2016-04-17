@@ -19,10 +19,14 @@
 ###############################################################################
 # echo "allmake start ..."
 ###############################################################################
+# TODOs: 
+# allmake git [git command]
+# allmake mvn [mvn command]
+###############################################################################
 # Basic Info
 
-ALLMAKE_VER="1.0.1"
-ALLMAKE_UPDATED="2016.04.07"
+ALLMAKE_VER="1.0.2"
+ALLMAKE_UPDATED="2016.04.17"
 ALLMAKE_NAME=allmake
 ALLMAKE_AUTHER="John Deng (john.deng@outlook.com)"
 ALLMAKE_DES="Description: The cross platform development toolkit - ${ALLMAKE_NAME}"
@@ -1311,6 +1315,32 @@ function buildall()
     return 0
 }
 
+function rungit()
+{   
+    echo -e $GREEN $1 $ENDCOLOR
+
+    git $push $pull $checkout $branch $param
+}   
+
+function runmvn()
+{   
+    echo -e $GREEN $1 $ENDCOLOR
+
+    if [ "$release" == "release" ]; then
+        find ./ -name "*provider*.jar" | while read javajarfile; do
+            mkdir -p $ALLMAKE_HOME/release/mvn/$1/app
+            cp $javajarfile $ALLMAKE_HOME/release/mvn/$1/app/
+        done
+        
+        find ./ -name "*consumer*.jar" | while read javajarfile; do
+            mkdir -p $ALLMAKE_HOME/release/mvn/$1/app
+            cp $javajarfile $ALLMAKE_HOME/release/mvn/$1/app/
+        done    
+    else
+        mvn $clean $compile $install $package $run $test $param
+    fi
+}
+
 function rundockercompose()
 {
     l_daemon=
@@ -1376,6 +1406,91 @@ function rundockers()
         if [ "$sleep" != "" ]; then
             sleep $sleep
         fi
+       
+        popd > /dev/null
+
+    done
+
+
+    return 0
+}
+
+
+function runmvns()
+{
+
+    if [ "$help" != "" ]; then
+
+        echo -e " 
+        ${ALLMAKE_NAME} mvn clean               Clean project
+        ${ALLMAKE_NAME} mvn compile             Compile project
+        ${ALLMAKE_NAME} mvn run                 Run project
+        ${ALLMAKE_NAME} mvn install             Install to maven repository       
+        "
+        exit
+    fi
+    
+    find ./ -maxdepth 2 -name "pom.xml" -print | sort | while read mvnproj; do
+
+        mvnprojdir=$(dirname "${mvnproj}")
+        #echo $dockerdir
+        # echo builders:$builders
+        pushd $mvnprojdir > /dev/null
+
+        #echo $PWD
+        # # echo "builders: $builders"        
+        if [ "$app" != "" ]; then
+            if [ $(echo $mvnprojdir | grep -c "$app") -gt 0 ]; then
+                #echo "run $app: $dockercompose"
+                runmvn $mvnprojdir
+
+            fi
+        else
+            #echo "run $dockercompose"
+            runmvn $mvnprojdir
+        fi 
+             
+       
+        popd > /dev/null
+
+    done
+
+
+
+    return 0
+}
+
+
+function rungits()
+{
+
+    if [ "$help" != "" ]; then
+
+        echo -e " 
+        ${ALLMAKE_NAME} git pull                    Git pull
+        ${ALLMAKE_NAME} git checkout [branch name]  Git checkout branch            
+        "
+        exit
+    fi
+
+    find ./ -type d -name ".git" -print | sort | while read gitproj; do
+
+        gitprojdir=$(dirname "${gitproj}")
+        #echo $dockerdir
+        # echo builders:$builders
+        pushd $gitprojdir > /dev/null
+
+        #echo $PWD
+
+        # # echo "builders: $builders"
+        if [ "$app" != "" ]; then
+            if [ $(echo $gitprojdir | grep -c "$app") -gt 0 ]; then
+                rungit $gitprojdir
+
+            fi
+        else
+            rungit $gitprojdir
+        fi        
        
         popd > /dev/null
 
@@ -1740,6 +1855,14 @@ if [ "$add" != "" ]; then
             quit "Cancelled"
         fi
     fi
+elif [ "$git" != "" ]; then
+
+    rungits
+    exit
+elif [ "$mvn" != "" ]; then
+
+    runmvns
+    exit
 elif [ "$docker" != "" ]; then
 
     rundockers
