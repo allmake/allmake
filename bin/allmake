@@ -1333,7 +1333,9 @@ function runmvn()
 {   
     echo -e $GREEN $1 $ENDCOLOR
 
-    mvn $clean $compile $install $package $run $test $param
+    if [ "$clean$compile$install$package$run$test$param" != "" ]; then
+        mvn $clean $compile $install $package $run $test $param
+    fi
 
     if [ "$release" == "release" ]; then
         echo ""
