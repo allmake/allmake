@@ -1315,6 +1315,13 @@ function buildall()
     return 0
 }
 
+function runcmd()
+{   
+    echo -e $GREEN $1 "->" $cmd $ENDCOLOR
+
+    $cmd
+}
+
 function rungit()
 {   
     echo -e $GREEN $1 $ENDCOLOR
@@ -1463,6 +1470,60 @@ function runmvns()
     return 0
 }
 
+function runcmds()
+{
+
+    if [ "$help" != "" ]; then
+        echo -e " 
+        ${ALLMAKE_NAME} cmd="any unix/linux command line"         
+        "
+        exit
+    fi
+
+    searchType=
+    filter=$filter
+    if [ $(echo $cmd | grep -c "git") -gt 0 ]; then
+        searchType="-type d"
+        filter=".git"
+    elif [ $(echo $cmd | grep -c "mvn") -gt 0 ]; then
+        filter="pom.xml"
+        maxdepth=2
+    elif [ "$filter" == "" ]; then
+        filter="*"
+    fi
+
+
+    depth=
+    if [ "$maxdepth" != "" ]; then
+        depth="-maxdepth $maxdepth"
+    fi
+    
+    find ./ $depth $searchType -name "$filter" -print | sort | while read proj; do
+
+        projdir=$(dirname "${proj}")
+        #echo $dockerdir
+        # echo builders:$builders
+        pushd $projdir > /dev/null
+
+        #echo $PWD
+
+        # # echo "builders: $builders"
+        if [ "$app" != "" ]; then
+            if [ $(echo $projdir | grep -c "$app") -gt 0 ]; then
+                runcmd $projdir
+
+            fi
+        else
+            runcmd $projdir
+        fi        
+       
+        popd > /dev/null
+
+    done
+
+
+    return 0
+}
 
 function rungits()
 {
@@ -1861,6 +1922,11 @@ if [ "$add" != "" ]; then
             quit "Cancelled"
         fi
     fi
+elif [ "$cmd" != "" ]; then
+
+    runcmds
+    exit
+
 elif [ "$git" != "" ]; then
 
     rungits
