@@ -4,7 +4,7 @@ ${app}:
   volumes:
     - ./app:/app
 
-  command: java -jar /app/${app}-${ver}.jar -XX:PermSize=30m -Xmx68m --spring.profiles.active=${profile}
+  command: java -Xmx128m -Xss256k -jar /app/${app}-${ver}.jar --spring.profiles.active=${profile}
 
   ports:
 ${portsArray}
