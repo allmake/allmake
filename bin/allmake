@@ -1341,14 +1341,25 @@ function runmvn()
         echo ""
         echo -e $GREEN Release $1 $ENDCOLOR
 
-        find ./ -name "*provider*.jar" | while read javajarfile; do
-            mkdir -p $ALLMAKE_HOME/release/mvn/$1/app
-            cp $javajarfile $ALLMAKE_HOME/release/mvn/$1/app/
+        finaltargetdir=$ALLMAKE_HOME/release/mvn/$1/app
+        Projectname=${1##*\/}
+
+        find . -name "*provider*.jar" | while read javajarfile; do
+            if [ "$outdir" != "" ]; then
+                finaltargetdir=$(find $outdir -name ${Projectname}-provider)/app
+            fi
+            echo finaltargetdir: $finaltargetdir
+            mkdir -p $finaltargetdir
+            cp $javajarfile $finaltargetdir
         done
         
-        find ./ -name "*consumer*.jar" | while read javajarfile; do
-            mkdir -p $ALLMAKE_HOME/release/mvn/$1/app
-            cp $javajarfile $ALLMAKE_HOME/release/mvn/$1/app/
+        find . -name "*consumer*.jar" | while read javajarfile; do
+            if [ "$outdir" != "" ]; then
+                finaltargetdir=$(find $outdir -name ${Projectname}-consumer)/app
+            fi
+            echo finaltargetdir: $finaltargetdir
+            mkdir -p $finaltargetdir
+            cp $javajarfile $finaltargetdir
         done    
     fi
 }
@@ -1442,7 +1453,7 @@ function runmvns()
         exit
     fi
     
-    find ./ -maxdepth 2 -name "pom.xml" -print | sort | while read mvnproj; do
+    find . -maxdepth 2 -name "pom.xml" -print | sort | while read mvnproj; do
 
         mvnprojdir=$(dirname "${mvnproj}")
         #echo $dockerdir
