@@ -1344,11 +1344,15 @@ function runmvn()
         finaltargetdir=$ALLMAKE_HOME/release/mvn/$1/app
         Projectname=${1##*\/}
 
+        if [ "$outdir" == "" ]; then
+            outdir=$ALLMAKE_OUT_DIR
+        fi
+
         find . -name "*provider*.jar" | while read javajarfile; do
             if [ "$outdir" != "" ]; then
                 finaltargetdir=$(find $outdir -name ${Projectname}-provider)/app
             fi
-            echo finaltargetdir: $finaltargetdir
+            #echo finaltargetdir: $finaltargetdir
             mkdir -p $finaltargetdir
             cp $javajarfile $finaltargetdir
         done
@@ -1357,7 +1361,7 @@ function runmvn()
             if [ "$outdir" != "" ]; then
                 finaltargetdir=$(find $outdir -name ${Projectname}-consumer)/app
             fi
-            echo finaltargetdir: $finaltargetdir
+            #echo finaltargetdir: $finaltargetdir
             mkdir -p $finaltargetdir
             cp $javajarfile $finaltargetdir
         done    
