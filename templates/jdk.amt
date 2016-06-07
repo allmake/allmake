@@ -1,6 +1,7 @@
 ${app}:
   image: jdk:8
   working_dir: /app
+  net: host
   volumes:
     - ./app:/app
 
@@ -9,9 +10,9 @@ ${app}:
   ports:
 ${portsArray}
 
-  environment:
-    HOSTNAME: vpclub
+#  environment:
+#    HOSTNAME: vpclub
 
-  extra_hosts:
-    vpclub: ${hostIpAddress}
+#  extra_hosts:
+#    vpclub: ${hostIpAddress}
 

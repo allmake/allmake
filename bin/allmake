@@ -1868,7 +1868,7 @@ fi
 
 if [ "$add" != "" ]; then
     if [ "$app" != "" ]; then
-        # allmake add app=vp-sms-provider ver=1.0.0 profile=test ports="9100 9200 9300" template=java inet=eth0
+        # allmake add app=vp-sms-provider ver=1.0.0 profile=test ports="9100 9200 9300" template=java inet=eth0 jmx=64m
         #o "$app"
 
         hostIpAddress=$(ifconfig $inet | grep "inet addr" | cut -d ':' -f 2 | cut -d ' ' -f 1)
@@ -1887,7 +1887,7 @@ if [ "$add" != "" ]; then
 
         cp $ALLMAKE_HOME/templates/$template.amt $app/docker-compose.yml        
 
-        sed -i "s/\${app}/${app}/g; s/\${ver}/${ver}/g; s/\${profile}/${profile}/g; s/\${hostIpAddress}/${hostIpAddress}/g" $app/docker-compose.yml
+        sed -i "s/\${app}/${app}/g; s/\${jmx}/${jmx}/g;s/\${ver}/${ver}/g; s/\${profile}/${profile}/g; s/\${hostIpAddress}/${hostIpAddress}/g" $app/docker-compose.yml
 
         rpl -w -q "\${portsArray}" "${portsArray}" $app/docker-compose.yml
 
