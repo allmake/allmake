@@ -25,8 +25,8 @@
 ###############################################################################
 # Basic Info
 
-ALLMAKE_VER="1.0.2"
-ALLMAKE_UPDATED="2016.04.17"
+ALLMAKE_VER="1.0.3"
+ALLMAKE_UPDATED="2016.06.16"
 ALLMAKE_NAME=allmake
 ALLMAKE_AUTHER="John Deng (john.deng@outlook.com)"
 ALLMAKE_DES="Description: The cross platform development toolkit - ${ALLMAKE_NAME}"
@@ -75,6 +75,7 @@ options:
     ports   : ports that need to redirect
     template: java or node
     inet    : network adapter interface, e.g. eth0
+    refactor: rename file or folder name with keyword and replace text in files.
 
 Examples:      
     ${ALLMAKE_NAME} add plat=x86
@@ -87,8 +88,10 @@ Examples:
     ${ALLMAKE_NAME} plat=x86 clean all
     ${ALLMAKE_NAME} plat=x86 clean all bin
     ${ALLMAKE_NAME} plat=x86 clean all test
-    ${ALLMAKE_NAME} add app=myapp ver=1.0.0 profile=test ports="8080 9090 9500" template=java inet=eth0
+    ${ALLMAKE_NAME} add app=myapp ver=1.0.0 profile=test ports='8080 9090 9500' template=java inet=eth0
     ${ALLMAKE_NAME} docker up
+    ${ALLMAKE_NAME} mvn release outdir='specific output directory'
+    ${ALLMAKE_NAME} refactor='old text' to='new text'
 
     " 
 }
@@ -1864,8 +1867,55 @@ if [ "$SRC_DIR_NAME" == "" ]; then
 fi
 
 ###############################################################################
-# add new platform
+# refactor 
 
+if [ "$refactor" != "" ]; then
+
+    echo "refactor $refactor to $to in file $filter"
+    echo ""
+
+    find . -name "*${refactor}*" | { while read fileName; do
+    
+        echo $fileName
+
+        mv $fileName ${fileName//$refactor/$to}
+
+    done
+    }
+
+    # find files that content specific keyword
+    #if filter is not specified
+    if [ "$filter" == "" ]; then
+        filter="*.*"
+    fi
+
+    
+
+    foudFiles=
+    find . -type f -name "$filter" | xargs grep "$refactor" | grep \/ | { while read fileName; do
+        
+        fileName=${fileName%:*}
+        fileName=${fileName%:*}
+        fileName=${fileName%:*}
+        fileName=${fileName%:*}
+        
+        if [ `echo $foudFiles | grep -c "$fileName"` == 0 ]; then
+            echo "${fileName}"
+            foudFiles=$foudFiles\|$fileName
+
+            # refactor
+            rpl -q "${refactor}" "${to}" "$fileName"
+        fi        
+    done
+    }
+
+    echo ""
+    exit
+
+fi
+
+###############################################################################
+# add new platform
 if [ "$add" != "" ]; then
     if [ "$app" != "" ]; then
         # allmake add app=vp-sms-provider ver=1.0.0 profile=test ports="9100 9200 9300" template=java inet=eth0 jmx=64m
