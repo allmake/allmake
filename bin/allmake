@@ -1345,34 +1345,40 @@ function runmvn()
         echo -e $GREEN Release $1 $ENDCOLOR
 
         finaltargetdir=$ALLMAKE_HOME/release/mvn/$1/app
+        finalconfigdir=$ALLMAKE_HOME/release/mvn/$1/app/config
         Projectname=${1##*\/}
 
         if [ "$outdir" == "" ]; then
             outdir=$ALLMAKE_OUT_DIR
 	else
-	    finaltargetdir=$outdir/$1/app	    
+	    finaltargetdir=$outdir/$1/app
+            finalconfigdir=$outdir/$1/app/config	    
         fi
-	echo outdir: $outdir
-	echo finaltargetdir: $finaltargetdir	
+	#echo outdir: $outdir
+	#echo finaltargetdir: $finaltargetdir	
 
         find . -name "*provider*.jar" | while read javajarfile; do
 	    providerdir=$(find $outdir -name ${Projectname}-provider)
             if [ "$outdir" != "" ] && [ "$providerdir" != "" ]; then
                 finaltargetdir=$providerdir/app
+                finalconfigdir=$providerdir/app/config
             fi
-            echo finaltargetdir: $finaltargetdir
+           # echo finaltargetdir: $finaltargetdir
             mkdir -p $finaltargetdir
             cp $javajarfile $finaltargetdir
+	    cp -r ${javajarfile//${javajarfile##*\/}/}classes/application-*.yml $finalconfigdir
         done
         
         find . -name "*consumer*.jar" | while read javajarfile; do
 	    consumerdir=$(find $outdir -name ${Projectname}-consumer)
             if [ "$outdir" != "" ] && [ "$consumerdir" != "" ]; then
                 finaltargetdir=$consumerdir/app
+		finalconfigdir=$consumerdir/app/config
             fi
-            echo finaltargetdir: $finaltargetdir
+            # echo finalconfigdir: $finalconfigdir
             mkdir -p $finaltargetdir
             cp $javajarfile $finaltargetdir
+	    cp -r ${javajarfile//${javajarfile##*\/}/}classes/application-*.yml $finalconfigdir
         done    
     fi
 }
