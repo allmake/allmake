@@ -1,5 +1,5 @@
 ${app}:
-  image: jdk:8
+  image: hub.docker.vpclub.cn/vpclub/jdk:8
   working_dir: /app
   net: host
   volumes:
