@@ -18,4 +18,7 @@ ${portsArray}
   log_driver: syslog
   log_opt:
       syslog-address: "tcp://${logIpAddress}"
+<<<<<<< HEAD
 
+=======
+>>>>>>> development
