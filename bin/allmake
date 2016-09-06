@@ -72,7 +72,7 @@ options:
     app     : app name, e.g. app=myapp
     ver     : app version
     profile : profile [test, dev, prod]
-    ports   : ports that need to redirect
+    ports   : ports that need to redirect, it is an array.
     template: java or node
     inet    : network adapter interface, e.g. eth0
     refactor: rename file or folder name with keyword and replace text in files.
@@ -88,7 +88,7 @@ Examples:
     ${ALLMAKE_NAME} plat=x86 clean all
     ${ALLMAKE_NAME} plat=x86 clean all bin
     ${ALLMAKE_NAME} plat=x86 clean all test
-    ${ALLMAKE_NAME} add app=myapp ver=1.0.0 profile=test ports='8080 9090 9500' template=java inet=eth0
+    ${ALLMAKE_NAME} add app=myapp ver=1.0.0 profile=test ports="'"'"8080 9090 9500"'"'" template=java inet=eth0
     ${ALLMAKE_NAME} docker up
     ${ALLMAKE_NAME} mvn release outdir='specific output directory'
     ${ALLMAKE_NAME} refactor='old text' to='new text'
