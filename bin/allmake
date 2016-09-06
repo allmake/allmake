@@ -1952,10 +1952,14 @@ if [ "$add" != "" ]; then
           sed -i "s/\${app}/${app}/g; s/\${jmx}/${jmx}/g;s/\${ver}/${ver}/g; s/\${profile}/${profile}/g; s/\${hostIpAddress}/${hostIpAddress}/g; s/\${logIpAddress}/${logIpAddress}/g" $app/docker-compose.yml
 
           rpl -w -q "\${portsArray}" "${portsArray}" $app/docker-compose.yml
+
         elif [ "$template" == "dockerfile" ]; then
-        #if template is dockerfile add Dockerfile
+        #if template is dockerfile add Dockerfile,and makefile
           cp $ALLMAKE_HOME/templates/$template.amt $app/Dockerfile
           sed -i "s/\${app}/${app}/g; s/\${ver}/${ver}/g; s/\${profile}/${profile}/g" $app/Dockerfile
+        #create makefile
+        cp $ALLMAKE_HOME/templates/makefile.amt $app/Makefile
+        sed -i "s/\${app}/${app}/g; s/\${ver}/${ver}/g" $app/Makefile
         fi
         quit "Created app: $app"
 
