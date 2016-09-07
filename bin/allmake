@@ -2,7 +2,7 @@
 ###############################################################################
 # Description: The cross platform development toolkit - allmake
 # Author: John Deng (john.deng@outlook.com)
-# 
+#
 # Copyright (c) 2015 John Deng (john.deng@outlook.com)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@
 ###############################################################################
 # echo "allmake start ..."
 ###############################################################################
-# TODOs: 
+# TODOs:
 # allmake git [git command]
 # allmake mvn [mvn command]
 ###############################################################################
@@ -36,12 +36,12 @@ ALLMAKE_DES="Description: The cross platform development toolkit - ${ALLMAKE_NAM
 function showVersion()
 {
     echo -e " $GREEN
-            _|  _|                            _|                  
-    _|_|_|  _|  _|  _|_|_|  _|_|      _|_|_|  _|  _|      _|_|    
-  _|    _|  _|  _|  _|    _|    _|  _|    _|  _|_|      _|_|_|_|  
-  _|    _|  _|  _|  _|    _|    _|  _|    _|  _|  _|    _|        
+            _|  _|                            _|
+    _|_|_|  _|  _|  _|_|_|  _|_|      _|_|_|  _|  _|      _|_|
+  _|    _|  _|  _|  _|    _|    _|  _|    _|  _|_|      _|_|_|_|
+  _|    _|  _|  _|  _|    _|    _|  _|    _|  _|  _|    _|
     _|_|_|  _|  _|  _|    _|    _|    _|_|_|  _|    _|    _|_|_|   V$ALLMAKE_VER
-  
+
   $ALLMAKE_DES
   Author: $ALLMAKE_AUTHER
   Updated $ALLMAKE_UPDATED
@@ -72,14 +72,14 @@ options:
     app     : app name, e.g. app=myapp
     ver     : app version
     profile : profile [test, dev, prod]
-    ports   : ports that need to redirect
+    ports   : ports that need to redirect, it is an array.
     template: java or node
     inet    : network adapter interface, e.g. eth0
     refactor: rename file or folder name with keyword and replace text in files.
 
-Examples:      
+Examples:
     ${ALLMAKE_NAME} add plat=x86
-    ${ALLMAKE_NAME} update ver=1.0.1     
+    ${ALLMAKE_NAME} update ver=1.0.1
     ${ALLMAKE_NAME} plat=x86 uiclean ui
     ${ALLMAKE_NAME} plat=x86 clean
     ${ALLMAKE_NAME} plat=x86 clean all
@@ -88,12 +88,12 @@ Examples:
     ${ALLMAKE_NAME} plat=x86 clean all
     ${ALLMAKE_NAME} plat=x86 clean all bin
     ${ALLMAKE_NAME} plat=x86 clean all test
-    ${ALLMAKE_NAME} add app=myapp ver=1.0.0 profile=test ports='8080 9090 9500' template=java inet=eth0
+    ${ALLMAKE_NAME} add app=myapp ver=1.0.0 profile=test ports="'"'"8080 9090 9500"'"'" template=java inet=eth0
     ${ALLMAKE_NAME} docker up
     ${ALLMAKE_NAME} mvn release outdir='specific output directory'
     ${ALLMAKE_NAME} refactor='old text' to='new text'
 
-    " 
+    "
 }
 ###############################################################################
 # string replacement
@@ -116,13 +116,13 @@ function showWarning()
         shift
     done
     echo "_________________________________________________________________________________________"
-    echo -e "${ENDCOLOR}"        
+    echo -e "${ENDCOLOR}"
 }
 
 ###############################################################################
 # Prompt Yes or No
 
-function promptyesorno () 
+function promptyesorno ()
 {
     while true; do
         echo -e "${YELLOW}"
@@ -167,7 +167,7 @@ function initPlat()
         # create makefile for specifics platform
 		if [ "$isThirdPartyProject" == "no" ]; then
             # echo "Replaced platform makefile"
-			createPlatMakefile        
+			createPlatMakefile
 		fi
 	fi
 
@@ -228,23 +228,23 @@ function initPlat()
             fi
 
         done
-        echo ""        
+        echo ""
     )
 
     if [ "$cflags" != "" ]; then
-        EXPORT_CC="${EXPORT_CC} 
+        EXPORT_CC="${EXPORT_CC}
 export CFLAGS=$cflags"
     fi
     if [ "$cppflags" != "" ]; then
-        EXPORT_CC="${EXPORT_CC} 
+        EXPORT_CC="${EXPORT_CC}
 export CFLAGS=$cppflags"
     fi
     if [ "$cxxflags" != "" ]; then
-        EXPORT_CC="${EXPORT_CC} 
+        EXPORT_CC="${EXPORT_CC}
 export CFLAGS=$cxxflags"
     fi
     if [ "$ldflags" != "" ]; then
-        EXPORT_CC="${EXPORT_CC} 
+        EXPORT_CC="${EXPORT_CC}
 export CFLAGS=$ldflags"
     fi
 
@@ -352,7 +352,7 @@ pushd $WOKR_DIR > /dev/null
 if [ "\$$CONFIG_CMD" != "" ]; then
 
 	echo -e "\${DARKGREEN}configure ...\${ENDCOLOR}"
-    
+
 	$CONFIGURE
 else
 	$MAKE \$mt \$confclean \$distclean \$clean \$all \$uninstall \$install \$test
@@ -459,9 +459,9 @@ ifeq ('\$(BUILD_LIB)', 'yes')
             LIB_CFLAGS := -bundle -undefined dynamic_lookup
         else
             LIB_CFLAGS :=
-        endif    
+        endif
         LIB_LFLAGS := -dynamiclib
-    else 
+    else
         ifeq ('\$(LIBEXT)', 'dll')
             LIB_CFLAGS :=
             LIB_LFLAGS := -Wl,--add-stdcall-alias -shared
@@ -845,7 +845,7 @@ if [ -f $sourceFileName ]; then
     else
         return 1
     fi
-# else    
+# else
 #     echo "Added new file: $sourceFileName"
 fi
 
@@ -974,12 +974,12 @@ extern "C"
         }
         return TRUE;
     }
-    
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif  
+#endif
 _EOF_
 
 fi
@@ -992,7 +992,7 @@ function createVersionSource()
 
 #echo "createVersionSource() $1"
 
-updateVersion=$1    
+updateVersion=$1
 if [ "$updateVersion" == "yes"   ]; then
 
 cat > src/version.$SRC_EXT <<_EOF_
@@ -1035,7 +1035,7 @@ const char* ${S_PROJECT_NAME}Version();
 
 _EOF_
 
-fi    
+fi
 }
 
 ###############################################################################
@@ -1169,13 +1169,13 @@ function build()
     if [ ! -d $1 ]; then
         if [ "$add" == "" ]; then
             # if [ "$plat" != "" ]; then
-            #     showWarning "You arm running ${ALLMAKE_NAME} for the platform ($1) that does not exist." "Please run ${ALLMAKE_NAME} add plat=your-platform-name first."            
+            #     showWarning "You arm running ${ALLMAKE_NAME} for the platform ($1) that does not exist." "Please run ${ALLMAKE_NAME} add plat=your-platform-name first."
             # fi
             #echo "exit ..."
             return
         else
             mkdir -p $1
-        fi    
+        fi
     fi
     PLAT_DIR=$1
 
@@ -1214,7 +1214,7 @@ function build()
         if [ "${isThirdPartyProject}" == "yes" ]; then
             echo " Third party: $isThirdPartyProject"
         fi
-        echo " OS: $OS" 
+        echo " OS: $OS"
         echo " Platform: $plat $release"
         if [ "${isThirdPartyProject}" == "no" ]; then
             echo " Command line: make $LARGS"
@@ -1232,16 +1232,16 @@ function build()
             # echo -e "$RED Init returned $res! $ENDCOLOR"
             return $res
             quit
-        fi 
+        fi
 
 		if [ "${isThirdPartyProject}" == "yes" ]; then
 			buildThirdPart
-		else 
+		else
             if [ "$add" == "" ]; then
                 #echo "make ... "
                 make -s $mt ARGS_CFLAGS="${CUSTOM_CFLAGS}" ARGS_LFLAGS="${CUSTOM_LFLAGS}" $distclean $clean $all $install $print $uiclean $ui
             else
-                echo ""    
+                echo ""
                 echo "Added platform $PLAT_NAME successfully!"
                 echo ""
                 echo "Now you can run: "
@@ -1286,7 +1286,7 @@ function buildall()
             if [ ! -f $PWD/Makefile ] || [ "${COMMON_INCS}${COMMON_LIBS}${COMMON_CFLAGS}${COMMON_LFLAGS}" != ""  ]; then
                 #echo "Replaced build makefile"
                 createBuildMakefile
-            fi            
+            fi
         fi
 
         # echo "builders: $builders"
@@ -1294,7 +1294,7 @@ function buildall()
             platBuilder=`basename $platBuilder`
             # echo "platbuilder: $platBuilder"
             export BUILDER_DIR=${PWD}/$platBuilder
-            
+
             if [ "$plat" != "" ]; then
                 if [ `echo $platBuilder | grep -c "$plat"` -gt 0 ]; then
                 	#echo "build $plat: $platBuilder"
@@ -1303,7 +1303,7 @@ function buildall()
                     if [ $res != 0 ]; then
                         echo -e "$RED Failed on $platBuilder, error code: $res $ENDCOLOR"
                         return $res
-                    fi                 
+                    fi
                 fi
             else
             	#echo "build $platBuilder"
@@ -1319,21 +1319,21 @@ function buildall()
 }
 
 function runcmd()
-{   
+{
     echo -e $GREEN $1 "->" $cmd $ENDCOLOR
 
     $cmd
 }
 
 function rungit()
-{   
+{
     echo -e $GREEN $1 $ENDCOLOR
 
     git $push $pull $checkout $branch $param
-}   
+}
 
 function runmvn()
-{   
+{
     echo -e $GREEN $1 $ENDCOLOR
 
     if [ "$clean$compile$install$package$run$test$param" != "" ]; then
@@ -1352,10 +1352,10 @@ function runmvn()
             outdir=$ALLMAKE_OUT_DIR
 	else
 	    finaltargetdir=$outdir/$1/app
-            finalconfigdir=$outdir/$1/app/config	    
+            finalconfigdir=$outdir/$1/app/config
         fi
 	#echo outdir: $outdir
-	echo finaltargetdir: $finaltargetdir	
+	echo finaltargetdir: $finaltargetdir
 
         find . -name "*provider*.jar" | while read javajarfile; do
 	    providerdir=$(find $outdir -name ${Projectname}-provider)
@@ -1368,7 +1368,7 @@ function runmvn()
             cp $javajarfile $finaltargetdir
 	    cp -r ${javajarfile//${javajarfile##*\/}/}classes/application-*.yml $finalconfigdir
         done
-        
+
         find . -name "*consumer*.jar" | while read javajarfile; do
 	    consumerdir=$(find $outdir -name ${Projectname}-consumer)
             if [ "$outdir" != "" ] && [ "$consumerdir" != "" ]; then
@@ -1379,7 +1379,7 @@ function runmvn()
             mkdir -p $finaltargetdir $finalconfigdir
             cp $javajarfile $finaltargetdir
 	    cp -r ${javajarfile//${javajarfile##*\/}/}classes/application-*.yml $finalconfigdir
-        done    
+        done
     fi
 }
 
@@ -1390,15 +1390,15 @@ function rundockercompose()
         l_daemon=" -d"
     fi
 
-    sudo docker-compose $up $down $l_daemon $version $build $config $create $events $kill $logs $pause $port $ps $pull $restart $rm $run $scale $start $stop $unpause 
-}   
+    sudo docker-compose $up $down $l_daemon $version $build $config $create $events $kill $logs $pause $port $ps $pull $restart $rm $run $scale $start $stop $unpause
+}
 
 function rundockers()
 {
 
     if [ "$help" != "" ]; then
 
-        echo -e " 
+        echo -e "
         ${ALLMAKE_NAME} docker build              Build or rebuild services
         ${ALLMAKE_NAME} docker config             Validate and view the compose file
         ${ALLMAKE_NAME} docker create             Create services
@@ -1448,7 +1448,7 @@ function rundockers()
         if [ "$sleep" != "" ]; then
             sleep $sleep
         fi
-       
+
         popd > /dev/null
 
     done
@@ -1463,15 +1463,15 @@ function runmvns()
 
     if [ "$help" != "" ]; then
 
-        echo -e " 
+        echo -e "
         ${ALLMAKE_NAME} mvn clean               Clean project
         ${ALLMAKE_NAME} mvn compile             Compile project
         ${ALLMAKE_NAME} mvn run                 Run project
-        ${ALLMAKE_NAME} mvn install             Install to maven repository       
+        ${ALLMAKE_NAME} mvn install             Install to maven repository
         "
         exit
     fi
-    
+
     find . -maxdepth 2 -name "pom.xml" -print | sort | while read mvnproj; do
 
         mvnprojdir=$(dirname "${mvnproj}")
@@ -1480,7 +1480,7 @@ function runmvns()
         pushd $mvnprojdir > /dev/null
 
         #echo $PWD
-        # # echo "builders: $builders"        
+        # # echo "builders: $builders"
         if [ "$app" != "" ]; then
             if [ $(echo $mvnprojdir | grep -c "$app") -gt 0 ]; then
                 #echo "run $app: $dockercompose"
@@ -1490,9 +1490,9 @@ function runmvns()
         else
             #echo "run $dockercompose"
             runmvn $mvnprojdir
-        fi 
-             
-       
+        fi
+
+
         popd > /dev/null
 
     done
@@ -1506,8 +1506,8 @@ function runcmds()
 {
 
     if [ "$help" != "" ]; then
-        echo -e " 
-        ${ALLMAKE_NAME} cmd="any unix/linux command line"         
+        echo -e "
+        ${ALLMAKE_NAME} cmd="any unix/linux command line"
         "
         exit
     fi
@@ -1529,7 +1529,7 @@ function runcmds()
     if [ "$maxdepth" != "" ]; then
         depth="-maxdepth $maxdepth"
     fi
-    
+
     find ./ $depth $searchType -name "$filter" -print | sort | while read proj; do
 
         projdir=$(dirname "${proj}")
@@ -1547,8 +1547,8 @@ function runcmds()
             fi
         else
             runcmd $projdir
-        fi        
-       
+        fi
+
         popd > /dev/null
 
     done
@@ -1562,9 +1562,9 @@ function rungits()
 
     if [ "$help" != "" ]; then
 
-        echo -e " 
+        echo -e "
         ${ALLMAKE_NAME} git pull                    Git pull
-        ${ALLMAKE_NAME} git checkout [branch name]  Git checkout branch            
+        ${ALLMAKE_NAME} git checkout [branch name]  Git checkout branch
         "
         exit
     fi
@@ -1586,8 +1586,8 @@ function rungits()
             fi
         else
             rungit $gitprojdir
-        fi        
-       
+        fi
+
         popd > /dev/null
 
     done
@@ -1645,7 +1645,7 @@ if [ "$OS" == "Darwin" ]; then
     export COLOR_PREFIX="\033"
     DEP_INSTALL_CMD="brew install make rpl"
 elif [ "$OS" == "MSYS" ]; then
-    DEP_INSTALL_CMD="pacman -S make rpl"    
+    DEP_INSTALL_CMD="pacman -S make rpl"
 else
     export COLOR_PREFIX="\e"
 fi
@@ -1702,12 +1702,12 @@ if [ "$1" == "-i" ] || [ "$1" == "--install" ]; then
     # if [ "$hasMake" == "0" ]; then
         $DEP_INSTALL_CMD
     # fi
-    
-    ETC_PROFILE=/etc/profile 
+
+    ETC_PROFILE=/etc/profile
 
     hasAllmakeEnv=`cat $ETC_PROFILE | grep "\#allmake-begin"`
     #echo $hasAllmakeEnv
-    
+
     if [ "$hasAllmakeEnv" != "" ]; then
         #echo "replace ..."
         sed -n ":b
@@ -1744,7 +1744,7 @@ fi
 # Show version
 
 if [ "$1" == "-v" ] || [ "$1" == "--version" ]; then
-    
+
     showVersion
 
     exit
@@ -1755,14 +1755,14 @@ fi
 
 
 if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
-    
+
     showHelp
 
-    exit    
+    exit
 fi
 ###############################################################################
 # Parse the command line
-CMD_LINE=${0##*/} 
+CMD_LINE=${0##*/}
 while [ "$#" != "0" ]; do
     if [ "$1" == "plat" ]; then
         CMD_LINE="$CMD_LINE $1"
@@ -1879,7 +1879,7 @@ if [ "$SRC_DIR_NAME" == "" ]; then
 fi
 
 ###############################################################################
-# refactor 
+# refactor
 
 if [ "$refactor" != "" ]; then
 
@@ -1887,7 +1887,7 @@ if [ "$refactor" != "" ]; then
     echo ""
 
     find . -name "*${refactor}*" | { while read fileName; do
-    
+
         echo $fileName
 
         mv $fileName ${fileName//$refactor/$to}
@@ -1901,23 +1901,23 @@ if [ "$refactor" != "" ]; then
         filter="*.*"
     fi
 
-    
+
 
     foudFiles=
     find . -type f -name "$filter" | xargs grep "$refactor" | grep \/ | { while read fileName; do
-        
+
         fileName=${fileName%:*}
         fileName=${fileName%:*}
         fileName=${fileName%:*}
         fileName=${fileName%:*}
-        
+
         if [ `echo $foudFiles | grep -c "$fileName"` == 0 ]; then
             echo "${fileName}"
             foudFiles=$foudFiles\|$fileName
 
             # refactor
             rpl -q "${refactor}" "${to}" "$fileName"
-        fi        
+        fi
     done
     }
 
@@ -1934,6 +1934,8 @@ if [ "$add" != "" ]; then
         #o "$app"
 
         hostIpAddress=$(ifconfig $inet | grep "inet addr" | cut -d ':' -f 2 | cut -d ' ' -f 1)
+        #get deployk8s server port
+        port=$(echo ${ports%%\ *})
 
         portsArray=$(
             for port in $ports
@@ -1942,34 +1944,43 @@ if [ "$add" != "" ]; then
             done
         )
 
+        #split appname split last 20 character
+        appname=$(echo $app  | tail -c 20)
         #echo $portsArray
 
         mkdir -p $app/app/config
         mkdir -p $app/app/logs
         if [ "$template" == "java" ]; then
-          cp $ALLMAKE_HOME/templates/$template.amt $app/docker-compose.yml        
+          cp $ALLMAKE_HOME/templates/$template.amt $app/docker-compose.yml
 
           sed -i "s/\${app}/${app}/g; s/\${jmx}/${jmx}/g;s/\${ver}/${ver}/g; s/\${profile}/${profile}/g; s/\${hostIpAddress}/${hostIpAddress}/g; s/\${logIpAddress}/${logIpAddress}/g" $app/docker-compose.yml
 
           rpl -w -q "\${portsArray}" "${portsArray}" $app/docker-compose.yml
+
         elif [ "$template" == "dockerfile" ]; then
-        #if template is dockerfile add Dockerfile
+        #if template is dockerfile add Dockerfile,and makefile
           cp $ALLMAKE_HOME/templates/$template.amt $app/Dockerfile
-          sed -i "s/\${app}/${app}/g; s/\${ver}/${ver}/g" $app/Dockerfile
+          sed -i "s/\${app}/${app}/g; s/\${ver}/${ver}/g; s/\${profile}/${profile}/g" $app/Dockerfile
+        #create makefile
+        cp $ALLMAKE_HOME/templates/makefile.amt $app/Makefile
+        sed -i "s/\${app}/${app}/g; s/\${ver}/${ver}/g" $app/Makefile
+        #create deployk8s.yaml
+        cp $ALLMAKE_HOME/templates/deployk8s.amt $app/deployk8s.yaml
+        sed -i "s/\${app}/${app}/g; s/\${port}/${port}/g; s/\${appname}/${appname}/g" $app/deployk8s.yaml
         fi
         quit "Created app: $app"
 
     fi
 
     if [ ! -d build ]; then
-        mkdir -p build 
+        mkdir -p build
     fi
 
     if [ "$isThirdPartyProject" == "no" ]; then
         if [ ! -d src ]; then
             mkdir -p src
         fi
-        if [ ! -d include ]; then 
+        if [ ! -d include ]; then
             mkdir -p include
         fi
 
@@ -1982,7 +1993,7 @@ if [ "$add" != "" ]; then
         fi
 
         if [ "$ver" != "" ]; then
-            updateVersion=yes                
+            updateVersion=yes
         else
             ver=1.0.0
         fi
@@ -1991,7 +2002,7 @@ if [ "$add" != "" ]; then
         createVersionSource $updateVersion
         # if [ "$updateVersion" == "yes" ]; then
         #     quit "Changed app version to $ver"
-        # fi        
+        # fi
     fi
 
     createWinApi
@@ -2037,7 +2048,7 @@ else
         echo "Makefile not found"
         showHelp
         exit
-    fi     
+    fi
 
 fi
 
@@ -2088,7 +2099,7 @@ fi
 #             if [ "$isVaildSource" != "0" ]; then
 #                 echo "${SPACE}${binPath}"
 #                 #((count++))
-#             fi    
+#             fi
 #         fi
 #     done
 # }
@@ -2098,7 +2109,7 @@ result=
 if [ -d ./$SRC_DIR_NAME ]; then
 
     result=$(find ./$SRC_DIR_NAME -name "*.c*" -exec grep -rn "\<main\>[ ()]" {} \; -print | grep \/ | { while read binPath; do
-        
+
         binPath=${binPath%:*}
         binSrc=${binPath##*\/}
         srcFileFilterLnes=
@@ -2109,7 +2120,7 @@ if [ -d ./$SRC_DIR_NAME ]; then
             if [ "$isVaildSource" != "0" ]; then
                 echo ${SPACE}${binPath}
                 #((count++))
-            fi    
+            fi
         fi
     done
         #echo ":"
@@ -2150,7 +2161,7 @@ if [ "$bin" != "" ] && [ "$add" == "" ]; then
     firstRun=yes
     #find ./$SRC_DIR_NAME -name "$srcFindFilter" -exec grep -rn "\<main\>[ ()]" {} \; -print | grep \/ | while read binPath; do
     for binPath in $result
-    do    
+    do
         #echo "-----------------------------------------"
         #echo $binPath
         #echo "-----------------------------------------"
@@ -2175,7 +2186,7 @@ if [ "$bin" != "" ] && [ "$add" == "" ]; then
             l_srcFileFilter=${srcFileFilter//${SPACE}${binSrc}/}
             #echo src!filterout: ${binSrc}!${l_srcFileFilter}
 
-            # final build ...         
+            # final build ...
             buildall "${l_srcFileFilter}"
             res=$?
             if [ $res != 0 ]; then
@@ -2212,4 +2223,3 @@ fi
 
 # echo "quit ..."
 quit "Done!"
-
