@@ -1934,6 +1934,8 @@ if [ "$add" != "" ]; then
         #o "$app"
 
         hostIpAddress=$(ifconfig $inet | grep "inet addr" | cut -d ':' -f 2 | cut -d ' ' -f 1)
+        #get deployk8s server port
+        port=$(echo ${ports%%\ *})
 
         portsArray=$(
             for port in $ports
@@ -1942,6 +1944,8 @@ if [ "$add" != "" ]; then
             done
         )
 
+        #split appname split last 20 character
+        appname=$(echo $app  | tail -c 20)
         #echo $portsArray
 
         mkdir -p $app/app/config
@@ -1960,6 +1964,9 @@ if [ "$add" != "" ]; then
         #create makefile
         cp $ALLMAKE_HOME/templates/makefile.amt $app/Makefile
         sed -i "s/\${app}/${app}/g; s/\${ver}/${ver}/g" $app/Makefile
+        #create deployk8s.yaml
+        cp $ALLMAKE_HOME/templates/deployk8s.amt $app/deployk8s.yaml
+        sed -i "s/\${app}/${app}/g; s/\${port}/${port}/g; s/\${appname}/${appname}/g" $app/deployk8s.yaml
         fi
         quit "Created app: $app"
 
