@@ -9,14 +9,24 @@ spec:
       labels:
         app: ${appname} 
     spec:
+      imagePullSecrets:
+      - name: aliregistrykey
       containers:
       - name: ${app}
         image: hub.docker.vpclub.cn/vpclub_containers/${app}
         ports:
         - containerPort: ${port}
-#        - port: 10010
-      imagePullSecrets:
-      - name: aliregistrykey
+        env:
+        - name: PROFILE
+          value: ${profile}
+        ports:
+        volumeMounts:
+        - name: ${appname}-vol
+          mountPath: /app/logs
+      volumes:
+      - name: ${appname}-vol
+        hostPath:
+          path: /tmp/${app}/app/logs
 ####
 apiVersion: v1
 kind: Service
