@@ -20,13 +20,13 @@ spec:
         - name: PROFILE
           value: ${profile}
         ports:
-        volumeMounts:
-        - name: ${appname}-vol
-          mountPath: /app/logs
-      volumes:
-      - name: ${appname}-vol
-        hostPath:
-          path: /tmp/${app}/app/logs
+#        volumeMounts:
+#        - name: ${appname}-vol
+#          mountPath: /app/logs
+#      volumes:
+#      - name: ${appname}-vol
+#        hostPath:
+#          path: /tmp/${app}/app/logs
 ####
 apiVersion: v1
 kind: Service
