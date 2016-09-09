@@ -19,7 +19,6 @@ spec:
         env:
         - name: PROFILE
           value: ${profile}
-        ports:
 #        volumeMounts:
 #        - name: ${appname}-vol
 #          mountPath: /app/logs
