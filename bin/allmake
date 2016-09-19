@@ -1966,7 +1966,7 @@ if [ "$add" != "" ]; then
         sed -i "s/\${app}/${app}/g; s/\${ver}/${ver}/g" $app/Makefile
         #create deployk8s.yaml
         cp $ALLMAKE_HOME/templates/deployk8s.amt $app/deployk8s.yaml
-        sed -i "s/\${app}/${app}/g; s/\${port}/${port}/g; s/\${appname}/${appname}/g; s/\${profile}/${profile}/g" $app/deployk8s.yaml
+        sed -i "s/\${app}/${app}/g; s/\${port}/${port}/g; s/\${appname}/${appname}/g; s/\${ver}/${ver}/g; s/\${profile}/${profile}/g" $app/deployk8s.yaml
         fi
         quit "Created app: $app"
 

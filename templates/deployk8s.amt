@@ -28,7 +28,7 @@ spec:
       - name: aliregistrykey
       containers:
       - name: ${app}
-        image: hub.docker.vpclub.cn/vpclub_containers/${app}
+        image: hub.docker.vpclub.cn/vpclub_containers/${app}:${ver}
         ports:
         - containerPort: ${port}
         env:
