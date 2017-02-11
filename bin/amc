@@ -25,8 +25,8 @@ function show_pv_usage() {
   echo "usages: "
   echo "  ${app} create pv size=10 "
   echo "  ${app} delete pv=pv-name"
-  echo "  ${app} edit pv size=8 cmd="'"'"chmod 644"'"'" "
-  echo "  ${app} edit pv size=8 cmd="'"'"chown 27:27"'"'" "
+  echo "  ${app} edit pv size=8 cmd="'"'"chmod 644 {}"'"'" "
+  echo "  ${app} edit pv size=8 cmd="'"'"chown 27:27 {}"'"'" "
   echo "  ${app} edit pv size=8 uid=27 pvc name=mysql-pvc "
   echo "  ${app} delete pv pvc name="'"'"nexus-data"'"'" "
 }
