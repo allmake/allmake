@@ -1,0 +1,131 @@
+#!/bin/bash
+###############################################################################
+# Name: amc
+# Description: amc is the client tool for simplifying shell commands
+# Author: John Deng (john.deng@qq.com)
+# Updated: 2017-02-11
+###############################################################################
+export ver="0.0.1"
+
+source $(which clap)
+
+function show_version() {
+  echo ""
+  echo "amc version: $ver"
+  echo "amc is the client tool for simplifying shell commands"
+}
+
+
+function show_usage() {
+  show_version
+  echo "usage: "
+  echo "  $0 create pv size=10 "
+  echo "  $0 delete pv=pv-name"
+  echo "  $0 edit pv cmd="'"'"chmod 644"'"'" "
+  echo "  $0 edit pv cmd="'"'"chown user:user"'"'" "
+}
+
+function exec_command_on_volume() {
+  
+  echo "execute command on pv: $1 cmd: $2"
+
+  if [ "$2" == "" ]; then
+    show_usage
+    exit
+  fi
+
+  # NOTE: assume that glusterfs is deployed on default project
+  current_project=$(oc projects | grep "*" | awk '{print $2}')
+  if [ "$current_project" != "default" ]; then
+    oc project default
+  fi 
+
+  volume=$(oc describe pv $1 | grep Path | awk '{print $2}' | sed s/vol_//g) 
+  cmd=$2
+
+  echo volume: $volume
+
+  # get all glusterfs pods
+  glusterfs_pods=$(oc get po -n default | grep glusterfs | awk '{print $1}')
+
+  if [ "$volume" != "" ] ; then
+    
+    # get all volume path
+    volumes=$(awk "/${volume}/,/Name/" <<<  "$(heketi-cli topology info)" | grep Path | awk '{print $2}')
+    
+    # get all glusterfs pods
+    glusterfs_pods=$(oc get po -n default | grep glusterfs | awk '{print $1}')
+
+    while read p; do
+      oc rsh $p <<EOF
+      echo $p
+      echo "$volumes" | while read vol; do
+        if [ -d "\${vol}" ]; then
+          final_cmd="$(echo ${cmd} | sed 's/{}/\${vol}/g')"
+          echo "command: \${final_cmd}"
+          \${final_cmd}
+        fi
+      done
+EOF
+    done <<< "$glusterfs_pods"
+  fi
+
+  oc project $current_project
+}
+
+function delete_pv() {
+  if [ "$delete" == "delete" ]; then 
+    echo deleting pv $pv
+    volume=$(oc describe pv $pv | grep Path | awk '{print $2}' | sed s/vol_//g)
+    heketi-cli volume delete $volume
+    oc delete pv $pv
+  fi  
+}
+
+function create_pv() {
+  echo creating pv size=$size
+  result=$(heketi-cli volume create --size=$size --persistent-volume --persistent-volume-endpoint=heketi-storage-endpoints | oc create -f - )
+  new_pv=$(echo $result | awk '{print $2}' | sed s/\"//g)
+  if [ "$cmd" == "" ]; then
+    cmd="chmod 777 "
+  fi
+
+  exec_command_on_volume "${new_pv}" "${cmd}"
+}
+
+###############################################################################
+# main entry
+function main() {
+  if [ "$version" == "version" ]; then 
+    show_version
+    exit
+  fi
+
+  if [ "$pv" != "" ]; then
+
+
+    if [ "$help" == "help" ]; then 
+      show_usage
+      exit
+    fi
+
+    export HEKETI_CLI_SERVER="http://$(oc get route -n default | grep heketi | grep all | awk '{print $2}')"
+    echo connecting to heketi server $HEKETI_CLI_SERVER
+
+    if [ "$delete" == "delete" ]; then 
+      delete_pv
+    fi
+
+    if [ "$create" == "create" ] && [ $size > 0 ] ; then
+      create_pv
+    fi
+
+    if [ "$edit" == "edit" ] && [ "$cmd" != "" ] ; then
+      exec_command_on_volume $pv "$cmd"
+    fi
+
+  fi
+
+}
+
+main
