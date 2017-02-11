@@ -12,6 +12,8 @@ source $(which logging)
 
 app="amc"
 
+echo "cmd: $CMD_LINE"
+
 function show_version() {
   echo ""
   echo "amc version: $ver"
@@ -20,16 +22,18 @@ function show_version() {
 
 function show_pv_usage() {
   show_version
-  echo "usage: "
+  echo "usages: "
   echo "  ${app} create pv size=10 "
   echo "  ${app} delete pv=pv-name"
-  echo "  ${app} edit pv cmd="'"'"chmod 644"'"'" "
-  echo "  ${app} edit pv cmd="'"'"chown user:user"'"'" "
+  echo "  ${app} edit pv size=8 cmd="'"'"chmod 644"'"'" "
+  echo "  ${app} edit pv size=8 cmd="'"'"chown 27:27"'"'" "
+  echo "  ${app} edit pv size=8 uid=27 pvc name=mysql-pvc "
+  echo "  ${app} delete pv pvc name="'"'"nexus-data"'"'" "
 }
 
 function show_exec_usage() {
   show_version
-  echo "usage: "
+  echo "usages: "
   echo "  ${app} exec pod=the-pod-id cmd="'"'"ls -l"'"'"  "
   echo "  ${app} exec pod=the-pod-id cmd="'"'"any-shell-command"'"'"  "
 }
@@ -113,25 +117,47 @@ function create_pv() {
   result=$(heketi-cli volume create --size=$size --persistent-volume --persistent-volume-endpoint=heketi-storage-endpoints | oc create -f - )
   new_pv=$(echo $result | awk '{print $2}' | sed s/\"//g)
   if [ "$cmd" == "" ]; then
-    cmd="chmod 777 "
+    cmd="chmod 777 {}"
+  fi
+  if [ "$uid" != "" ]; then
+    cmd="chown ${uid}:${uid} {}"
   fi
 
   exec_command_on_volume "${new_pv}" "${cmd}"
 }
 
+function create_pvc() {
+  echo "create pvc name: ${name} size: ${size}"
+  if [ "${mode}" == "" ]; then
+    mode="ReadWriteMany"
+  fi  
+
+  oc create -f - <<_EOF_
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ${name}
+spec:
+  accessModes:
+  - ${mode}
+  resources:
+    requests:
+      storage: ${size}Gi
+status: {}
+_EOF_
+}
+
 ###############################################################################
 # main entry
 function main() {
-  log "main loop ..."
+  #log "main loop ..."
 
   if [ "$version" == "version" ]; then 
     show_version
     exit
   fi
 
-  log "debug"
   if [ "$pv" != "" ]; then
-    log "debug"
     if [ "$help" == "help" ]; then 
       show_pv_usage
       exit
@@ -140,15 +166,33 @@ function main() {
     export HEKETI_CLI_SERVER="http://$(oc get route -n default | grep heketi | grep all | awk '{print $2}')"
     echo connecting to heketi server $HEKETI_CLI_SERVER
 
-    if [ "$delete" == "delete" ]; then 
+    if [ "$delete" == "delete" ] && [ "$pv" != "pv" ]; then 
       delete_pv
     elif [ "$create" == "create" ] && [ $size > 0 ] ; then
       create_pv
     elif [ "$edit" == "edit" ] && [ "$cmd" != "" ] ; then
       exec_command_on_volume $pv "$cmd"
     fi
+  fi
 
-  elif [ "$exec" != "" ]; then
+  if [ "$pvc" != "" ]; then
+    if [ "$create" == "create" ] && [ $size > 0 ] ; then
+      create_pvc
+    elif [ "$delete" == "delete" ]; then
+      echo  "delete pvc, name: $name"
+      
+      if [ "$pv" = "pv" ]; then
+        pv=$(oc get pvc | grep nexus-postgres-data | awk '{print $3}')
+        if [ "$pv" != "" ]; then
+          delete_pv
+        fi
+      fi
+      oc delete pvc $name
+    fi
+
+  fi
+
+  if [ "$exec" != "" ]; then
     log "debug"
     if [ "$help" == "help" ]; then 
       log "debug"
@@ -156,6 +200,9 @@ function main() {
     elif [ "$cmd" != "" ] && [ "$pod" != "" ] ; then
       log "debug"
       exec_command "$pod" "$cmd"
+    elif [ "$cmd" != "" ] && [ "$pods" != "" ] ; then
+      log "debug"
+      exec_command "$pods" "$cmd" "batch"
     fi
   fi
 }

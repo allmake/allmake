@@ -1,3 +1,4 @@
+#!/bin/bash
 ###############################################################################
 # Description: The shell command line argument parser - clap
 # Author: John Deng (john.deng@outlook.com)
@@ -34,7 +35,7 @@
 # example.sh rebuild arg1=var1
 #
 ###############################################################################
-CLAP_VERSION=1.0.0
+CLAP_VERSION=1.0.1
 
 function showVersion()
 {
@@ -59,26 +60,18 @@ function showVersion()
 # Parse the command line
 CMD_LINE=${0##*/}
 while [ "$#" != "0" ]; do
-    if [ "$1" == "plat" ]; then
-        CMD_LINE="$CMD_LINE $1"
-        shift
-        plat="$1"
-        CMD_LINE="$CMD_LINE $1"
-        shift
-    fi
-
     if [ `echo "$1" | grep -c "="` -gt 0 ]; then
         # echo $1
-        read name value <<<$(IFS="="; echo $1)
-        value=$1
-        value=${value#*=}
-        # echo name: $name value: $value
-        export eval $(echo $name)="$value"
+        read clap_parsed_name clap_parsed_value <<<$(IFS="="; echo $1)
+        clap_parsed_value=$1
+        clap_parsed_value=${clap_parsed_value#*=}
+        # echo clap_parsed_name: $clap_parsed_name clap_parsed_value: $clap_parsed_value
+        export eval $(echo $clap_parsed_name)="$clap_parsed_value"
 
-        numOfWord=`echo $value | wc -w`
+        numOfWord=`echo $clap_parsed_value | wc -w`
         if [ $numOfWord -gt 1 ]; then
-            CMD_LINE="$CMD_LINE $name='"
-            CMD_LINE="$CMD_LINE${value}'"
+            CMD_LINE="$CMD_LINE $clap_parsed_name='"
+            CMD_LINE="$CMD_LINE${clap_parsed_value}'"
         else
             CMD_LINE="$CMD_LINE $1"
         fi
