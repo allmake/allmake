@@ -8,6 +8,9 @@
 export ver="0.0.1"
 
 source $(which clap)
+source $(which logging)
+
+app="amc"
 
 function show_version() {
   echo ""
@@ -15,14 +18,20 @@ function show_version() {
   echo "amc is the client tool for simplifying shell commands"
 }
 
-
-function show_usage() {
+function show_pv_usage() {
   show_version
   echo "usage: "
-  echo "  $0 create pv size=10 "
-  echo "  $0 delete pv=pv-name"
-  echo "  $0 edit pv cmd="'"'"chmod 644"'"'" "
-  echo "  $0 edit pv cmd="'"'"chown user:user"'"'" "
+  echo "  ${app} create pv size=10 "
+  echo "  ${app} delete pv=pv-name"
+  echo "  ${app} edit pv cmd="'"'"chmod 644"'"'" "
+  echo "  ${app} edit pv cmd="'"'"chown user:user"'"'" "
+}
+
+function show_exec_usage() {
+  show_version
+  echo "usage: "
+  echo "  ${app} exec pod=the-pod-id cmd="'"'"ls -l"'"'"  "
+  echo "  ${app} exec pod=the-pod-id cmd="'"'"any-shell-command"'"'"  "
 }
 
 function exec_command_on_volume() {
@@ -30,7 +39,7 @@ function exec_command_on_volume() {
   echo "execute command on pv: $1 cmd: $2"
 
   if [ "$2" == "" ]; then
-    show_usage
+    show_pv_usage
     exit
   fi
 
@@ -73,6 +82,23 @@ EOF
   oc project $current_project
 }
 
+function exec_command() {
+  
+  echo "execute command on pod: $1 cmd: $2"
+
+  if [ "$2" == "" ] || [ "$1" == "" ]; then
+    show_pv_usage
+    exit
+  fi
+
+  oc rsh $pod <<EOF
+    echo ${cmd}
+    ${cmd}
+EOF
+
+  oc project $current_project
+}
+
 function delete_pv() {
   if [ "$delete" == "delete" ]; then 
     echo deleting pv $pv
@@ -96,16 +122,18 @@ function create_pv() {
 ###############################################################################
 # main entry
 function main() {
+  log "main loop ..."
+
   if [ "$version" == "version" ]; then 
     show_version
     exit
   fi
 
+  log "debug"
   if [ "$pv" != "" ]; then
-
-
+    log "debug"
     if [ "$help" == "help" ]; then 
-      show_usage
+      show_pv_usage
       exit
     fi
 
@@ -114,18 +142,22 @@ function main() {
 
     if [ "$delete" == "delete" ]; then 
       delete_pv
-    fi
-
-    if [ "$create" == "create" ] && [ $size > 0 ] ; then
+    elif [ "$create" == "create" ] && [ $size > 0 ] ; then
       create_pv
-    fi
-
-    if [ "$edit" == "edit" ] && [ "$cmd" != "" ] ; then
+    elif [ "$edit" == "edit" ] && [ "$cmd" != "" ] ; then
       exec_command_on_volume $pv "$cmd"
     fi
 
+  elif [ "$exec" != "" ]; then
+    log "debug"
+    if [ "$help" == "help" ]; then 
+      log "debug"
+      show_exec_usage
+    elif [ "$cmd" != "" ] && [ "$pod" != "" ] ; then
+      log "debug"
+      exec_command "$pod" "$cmd"
+    fi
   fi
-
 }
 
 main
