@@ -1779,6 +1779,22 @@ if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
 
     exit
 fi
+
+###############################################################################
+# Update
+
+
+if [ "$update" != "" ]; then
+
+    pushd $ALLMAKE_HOME
+        if [ "$branch" != "" ]; then
+          git chekout $branch
+        fi
+        git pull
+    popd
+
+    exit
+fi
 ###############################################################################
 # Parse the command line
 CMD_LINE=${0##*/}
