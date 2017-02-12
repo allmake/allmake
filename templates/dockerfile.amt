@@ -1,0 +1,8 @@
+FROM hub.docker.vpclub.cn/vpclub/java:8
+VOLUME /app
+ADD app /app
+WORKDIR /app
+ENV PROFILE=default
+RUN echo "#!/bin/bash\n java -Xmx128m -Xss256k -jar /app/${app}-${ver}.jar --spring.profiles.active=\$PROFILE" > /usr/local/bin/run.sh
+RUN chmod 755 /usr/local/bin/run.sh
+ENTRYPOINT ["/usr/local/bin/run.sh"]

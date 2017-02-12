@@ -1,0 +1,13 @@
+all: push
+
+# 0.0 shouldn't clobber any release builds
+TAG = ${ver}
+PREFIX = hub.docker.vpclub.cn/vpclub_containers/${app}
+
+container: 
+	docker build -t $(PREFIX):$(TAG) .
+
+push: container
+	docker push $(PREFIX):$(TAG)
+
+

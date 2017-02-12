@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${appname}-svc
+  labels:
+    app: ${appname}
+spec:
+  ports:
+  - port: 80
+    targetPort: ${port}
+    protocol: TCP
+    name: http
+  selector:
+    app: ${appname}
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: ${appname}-rc
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ${appname} 
+    spec:
+      imagePullSecrets:
+      - name: aliregistrykey
+      containers:
+      - name: ${app}
+        image: hub.docker.vpclub.cn/vpclub_containers/${app}:${ver}
+        ports:
+        - containerPort: ${port}
+        env:
+        - name: PROFILE
+          value: ${profile}
+#        volumeMounts:
+#        - name: ${appname}-vol
+#          mountPath: /app/logs
+#      volumes:
+#      - name: ${appname}-vol
+#        hostPath:
+#          path: /tmp/${app}/app/logs
