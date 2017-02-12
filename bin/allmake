@@ -1619,10 +1619,23 @@ function quit()
     exit
 }
 
+function get_linux_distro() {
+    distro='unkown'
+    id_like=$(cat /etc/*-release | grep ID_LIKE)
+
+    if [ $(echo $id_like | grep debian) ]; then
+      distro='debian'
+    elif [ $(echo $id_like | grep rhel) ] || [ $(echo $id_like | grep fedora) ]; then  
+      distro='rhel'
+    fi
+
+    eval " $1="'"'"$distro"'"'" "
+}
+
 ###############################################################################
 # all make main loop
 
-function mainloop()
+function main()
 {
     echo ""
 }
@@ -1636,17 +1649,23 @@ export DEVICE_PATH=$DEVICE_PATH
 export OS=`uname`
 export OS=${OS%_*}
 
-DEP_INSTALL_CMD="sudo apt-get install make rpl"
-if [ "$ALLMAKE_HOME" == "" ]; then
-    export ALLMAKE_HOME=$KIWI_ROOT
-fi
-
+DEP_INSTALL_CMD=""
 if [ "$OS" == "Darwin" ]; then
     export COLOR_PREFIX="\033"
     DEP_INSTALL_CMD="brew install make rpl"
 elif [ "$OS" == "MSYS" ]; then
     DEP_INSTALL_CMD="pacman -S make rpl"
 else
+
+    linux_distro=""
+    get_linux_distro linux_distro
+    
+    if [ "$linux_distro" == "debian" ]; then
+        DEP_INSTALL_CMD="sudo apt-get install make rpl"
+    elif [ "$linux_distro" == "rhel" ]; then
+        DEP_INSTALL_CMD="yum -y install make rpl"
+    fi
+
     export COLOR_PREFIX="\e"
 fi
 
