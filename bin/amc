@@ -40,7 +40,7 @@ function show_exec_usage() {
 
 function exec_command_on_volume() {
   
-  echo "execute command on pv: $1 cmd: $2"
+  echo "execute command on pv: $1 cmd: "'"'"$2"'"'" "
 
   if [ "$2" == "" ]; then
     show_pv_usage
@@ -71,7 +71,7 @@ function exec_command_on_volume() {
 
     while read p; do
       oc rsh $p <<EOF
-      echo $p
+      echo pod: $p
       echo "$volumes" | while read vol; do
         if [ -d "\${vol}" ]; then
           final_cmd="$(echo ${cmd} | sed 's/{}/\${vol}/g')"
@@ -163,7 +163,12 @@ function main() {
       exit
     fi
 
-    export HEKETI_CLI_SERVER="http://$(oc get route -n default | grep heketi | grep all | awk '{print $2}')"
+    network_option=" -l network=default "
+    if [ "$net" == "vpn" ] || [ "$vpn" == "vpn" ] ; then
+      network_option=" -l network=vpn "
+    fi
+
+    export HEKETI_CLI_SERVER="http://$(oc get route -n default $network_option | grep heketi | awk '{print $2}')"
     echo connecting to heketi server $HEKETI_CLI_SERVER
 
     if [ "$delete" == "delete" ] && [ "$pv" != "pv" ]; then 
@@ -171,7 +176,7 @@ function main() {
     elif [ "$create" == "create" ] && [ $size > 0 ] ; then
       create_pv
     elif [ "$edit" == "edit" ] && [ "$cmd" != "" ] ; then
-      exec_command_on_volume $pv "$cmd"
+      exec_command_on_volume "$pv" "$cmd"
     fi
   fi
 
