@@ -2,7 +2,7 @@
 ###############################################################################
 # Name: amc
 # Description: amc is the client tool for simplifying shell commands
-# Author: John Deng (john.deng@qq.com)
+# Author: John Deng (john.deng@outlook.com)
 # Updated: 2017-02-11
 ###############################################################################
 export ver="0.0.1"

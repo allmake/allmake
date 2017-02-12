@@ -25,8 +25,8 @@
 ###############################################################################
 # Basic Info
 
-ALLMAKE_VER="1.0.3"
-ALLMAKE_UPDATED="2016.06.16"
+ALLMAKE_VER="1.0.4"
+ALLMAKE_UPDATED="2017.02.12"
 ALLMAKE_NAME=allmake
 ALLMAKE_AUTHER="John Deng (john.deng@outlook.com)"
 ALLMAKE_DES="Description: The cross platform development toolkit - ${ALLMAKE_NAME}"
@@ -1760,16 +1760,6 @@ export PATH=\$ALLMAKE_HOME/bin:\$PATH
 fi
 
 ###############################################################################
-# Show version
-
-if [ "$1" == "-v" ] || [ "$1" == "--version" ]; then
-
-    showVersion
-
-    exit
-fi
-
-###############################################################################
 # Help
 
 
@@ -1781,20 +1771,15 @@ if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
 fi
 
 ###############################################################################
-# Update
+# Show version
 
+if [ "$1" == "-v" ] || [ "$1" == "--version" ]; then
 
-if [ "$update" != "" ]; then
-
-    pushd $ALLMAKE_HOME
-        if [ "$branch" != "" ]; then
-          git chekout $branch
-        fi
-        git pull
-    popd
+    showVersion
 
     exit
 fi
+
 ###############################################################################
 # Parse the command line
 CMD_LINE=${0##*/}
@@ -1913,6 +1898,19 @@ if [ "$SRC_DIR_NAME" == "" ]; then
     SRC_DIR_NAME=src
 fi
 
+###############################################################################
+# Update
+if [ "$update" != "" ]; then
+    echo "updating allmake ..."
+    pushd $ALLMAKE_HOME > /dev/null
+        if [ "$branch" != "" ]; then
+          git chekout $branch
+        fi
+        git pull
+    popd > /dev/null
+
+    exit
+fi
 ###############################################################################
 # refactor
 
