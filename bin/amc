@@ -1,0 +1,210 @@
+#!/bin/bash
+###############################################################################
+# Name: amc
+# Description: amc is the client tool for simplifying shell commands
+# Author: John Deng (john.deng@qq.com)
+# Updated: 2017-02-11
+###############################################################################
+export ver="0.0.1"
+
+source $(which clap)
+source $(which logging)
+
+app="amc"
+
+echo "cmd: $CMD_LINE"
+
+function show_version() {
+  echo ""
+  echo "amc version: $ver"
+  echo "amc is the client tool for simplifying shell commands"
+}
+
+function show_pv_usage() {
+  show_version
+  echo "usages: "
+  echo "  ${app} create pv size=10 "
+  echo "  ${app} delete pv=pv-name"
+  echo "  ${app} edit pv size=8 cmd="'"'"chmod 644 {}"'"'" "
+  echo "  ${app} edit pv size=8 cmd="'"'"chown 27:27 {}"'"'" "
+  echo "  ${app} edit pv size=8 uid=27 pvc name=mysql-pvc "
+  echo "  ${app} delete pv pvc name="'"'"nexus-data"'"'" "
+}
+
+function show_exec_usage() {
+  show_version
+  echo "usages: "
+  echo "  ${app} exec pod=the-pod-id cmd="'"'"ls -l"'"'"  "
+  echo "  ${app} exec pod=the-pod-id cmd="'"'"any-shell-command"'"'"  "
+}
+
+function exec_command_on_volume() {
+  
+  echo "execute command on pv: $1 cmd: $2"
+
+  if [ "$2" == "" ]; then
+    show_pv_usage
+    exit
+  fi
+
+  # NOTE: assume that glusterfs is deployed on default project
+  current_project=$(oc projects | grep "*" | awk '{print $2}')
+  if [ "$current_project" != "default" ]; then
+    oc project default
+  fi 
+
+  volume=$(oc describe pv $1 | grep Path | awk '{print $2}' | sed s/vol_//g) 
+  cmd=$2
+
+  echo volume: $volume
+
+  # get all glusterfs pods
+  glusterfs_pods=$(oc get po -n default | grep glusterfs | awk '{print $1}')
+
+  if [ "$volume" != "" ] ; then
+    
+    # get all volume path
+    volumes=$(awk "/${volume}/,/Name/" <<<  "$(heketi-cli topology info)" | grep Path | awk '{print $2}')
+    
+    # get all glusterfs pods
+    glusterfs_pods=$(oc get po -n default | grep glusterfs | awk '{print $1}')
+
+    while read p; do
+      oc rsh $p <<EOF
+      echo $p
+      echo "$volumes" | while read vol; do
+        if [ -d "\${vol}" ]; then
+          final_cmd="$(echo ${cmd} | sed 's/{}/\${vol}/g')"
+          echo "command: \${final_cmd}"
+          \${final_cmd}
+        fi
+      done
+EOF
+    done <<< "$glusterfs_pods"
+  fi
+
+  oc project $current_project
+}
+
+function exec_command() {
+  
+  echo "execute command on pod: $1 cmd: $2"
+
+  if [ "$2" == "" ] || [ "$1" == "" ]; then
+    show_pv_usage
+    exit
+  fi
+
+  oc rsh $pod <<EOF
+    echo ${cmd}
+    ${cmd}
+EOF
+
+  oc project $current_project
+}
+
+function delete_pv() {
+  if [ "$delete" == "delete" ]; then 
+    echo deleting pv $pv
+    volume=$(oc describe pv $pv | grep Path | awk '{print $2}' | sed s/vol_//g)
+    heketi-cli volume delete $volume
+    oc delete pv $pv
+  fi  
+}
+
+function create_pv() {
+  echo creating pv size=$size
+  result=$(heketi-cli volume create --size=$size --persistent-volume --persistent-volume-endpoint=heketi-storage-endpoints | oc create -f - )
+  new_pv=$(echo $result | awk '{print $2}' | sed s/\"//g)
+  if [ "$cmd" == "" ]; then
+    cmd="chmod 777 {}"
+  fi
+  if [ "$uid" != "" ]; then
+    cmd="chown ${uid}:${uid} {}"
+  fi
+
+  exec_command_on_volume "${new_pv}" "${cmd}"
+}
+
+function create_pvc() {
+  echo "create pvc name: ${name} size: ${size}"
+  if [ "${mode}" == "" ]; then
+    mode="ReadWriteMany"
+  fi  
+
+  oc create -f - <<_EOF_
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ${name}
+spec:
+  accessModes:
+  - ${mode}
+  resources:
+    requests:
+      storage: ${size}Gi
+status: {}
+_EOF_
+}
+
+###############################################################################
+# main entry
+function main() {
+  #log "main loop ..."
+
+  if [ "$version" == "version" ]; then 
+    show_version
+    exit
+  fi
+
+  if [ "$pv" != "" ]; then
+    if [ "$help" == "help" ]; then 
+      show_pv_usage
+      exit
+    fi
+
+    export HEKETI_CLI_SERVER="http://$(oc get route -n default | grep heketi | grep all | awk '{print $2}')"
+    echo connecting to heketi server $HEKETI_CLI_SERVER
+
+    if [ "$delete" == "delete" ] && [ "$pv" != "pv" ]; then 
+      delete_pv
+    elif [ "$create" == "create" ] && [ $size > 0 ] ; then
+      create_pv
+    elif [ "$edit" == "edit" ] && [ "$cmd" != "" ] ; then
+      exec_command_on_volume $pv "$cmd"
+    fi
+  fi
+
+  if [ "$pvc" != "" ]; then
+    if [ "$create" == "create" ] && [ $size > 0 ] ; then
+      create_pvc
+    elif [ "$delete" == "delete" ]; then
+      echo  "delete pvc, name: $name"
+      
+      if [ "$pv" = "pv" ]; then
+        pv=$(oc get pvc | grep nexus-postgres-data | awk '{print $3}')
+        if [ "$pv" != "" ]; then
+          delete_pv
+        fi
+      fi
+      oc delete pvc $name
+    fi
+
+  fi
+
+  if [ "$exec" != "" ]; then
+    log "debug"
+    if [ "$help" == "help" ]; then 
+      log "debug"
+      show_exec_usage
+    elif [ "$cmd" != "" ] && [ "$pod" != "" ] ; then
+      log "debug"
+      exec_command "$pod" "$cmd"
+    elif [ "$cmd" != "" ] && [ "$pods" != "" ] ; then
+      log "debug"
+      exec_command "$pods" "$cmd" "batch"
+    fi
+  fi
+}
+
+main
