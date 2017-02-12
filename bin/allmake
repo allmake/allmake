@@ -1623,9 +1623,9 @@ function get_linux_distro() {
     distro='unkown'
     id_like=$(cat /etc/*-release | grep ID_LIKE)
 
-    if [ $(echo $id_like | grep debian) ]; then
+    if [ $(echo "${id_like}" | grep debian) ]; then
       distro='debian'
-    elif [ $(echo $id_like | grep rhel) ] || [ $(echo $id_like | grep fedora) ]; then  
+    elif [ $(echo "${id_like}" | grep rhel) ] || [ $(echo "${id_like}" | grep fedora) ]; then  
       distro='rhel'
     fi
 
