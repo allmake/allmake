@@ -2000,6 +2000,10 @@ if [ "$add" != "" ]; then
         #create deployk8s.yaml
         cp $ALLMAKE_HOME/templates/deployk8s.amt $app/deployk8s.yaml
         sed -i "s/\${app}/${app}/g; s/\${port}/${port}/g; s/\${appname}/${appname}/g; s/\${ver}/${ver}/g; s/\${profile}/${profile}/g" $app/deployk8s.yaml
+
+        elif [ "$template" == "swarm" ]; then
+          cp $ALLMAKE_HOME/templates/$template.amt $app/docker-compose.yaml
+          sed -i "s/\${app}/${app}/g; s/\${ns}/${ns}/g; s/\${profile}/${profile}/g; s/\${ver}/${ver}/g" $app/docker-compose.yaml
         fi
         quit "Created app: $app"
 
