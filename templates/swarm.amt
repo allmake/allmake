@@ -1,0 +1,36 @@
+version: "3"
+services:
+  ${app}:
+    image: docker.vpclub.io/deployns-test/${app}:v1
+    hostname: ${app}.docker.vpclub.io
+    container_name: ${app}
+    privileged: true
+    environment:
+      - TZ=Asia/Shanghai
+      - SPRING_PROFILES_ACTIVE=${profile}
+    networks: 
+      overlay-vpclub:
+        aliases:
+          - ${app}.${ns}-${profile}
+    deploy:
+      replicas: 1 #启动的副本数量，默认启动1
+    extra_hosts:
+      - "fastdfs-${profile}:10.218.105.7"
+      - "hazelcast-${profile}:10.218.105.7"
+      - "rabbit-${profile}:10.218.105.7"
+      - "es-${profile}:10.218.105.7"
+      - "mongo-${profile}:10.218.105.7"
+      - "kafka-${profile}:10.218.105.7"
+      - "mysql-${profile}:10.218.105.7"
+      - "mysql-ro-${profile}:10.218.105.7"	 
+networks: 
+  bridge-vpclub:
+    external:
+      name: bridge-vpclub
+  macvlan-vpclub:
+    external:
+      name: macvlan-vpclub
+  overlay-vpclub:
+    external:
+      name: overlay-vpclub
+

@@ -1,6 +1,7 @@
 ${app}:
-  image: hub.docker.vpclub.cn/vpclub/java:8
+  image: vpclub/java:8
   working_dir: /app
+  restart: always
   net: host
   volumes:
     - ./app:/app
@@ -15,6 +16,6 @@ ${portsArray}
 #
 #  extra_hosts:
 #    vpclub: ${hostIpAddress}
-  log_driver: syslog
-  log_opt:
-      syslog-address: "tcp://${logIpAddress}"
+# log_driver: syslog
+# log_opt:
+#     syslog-address: "tcp://${logIpAddress}"
